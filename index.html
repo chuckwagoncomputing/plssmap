@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="UTF-8"/>
+  <title>PLSS Map</title>
+  <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport'/>
+  <link rel="shortcut icon" type="image/png" href="plss-neon.png"/>
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+  <script src="proj4.js"></script>
+  <script src="ol.js"></script>
+  <link rel="stylesheet" href="ol.css">
+  <script src="util.js"></script>
+  <script src="storage.js"></script>
+  <script src="sources/list.js"></script>
+  <script src="map.js"></script>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="font-awesome.min.css">
+ <head>
+ <body>
+  <template id="searchResult">
+   <button class="search-result-button"></button>
+  </template>
+  <div class="push-content" id="push-content">
+   <div id="map" class="map"></div>
+   <button id="controlCenter">
+    <span class="fa fa-location-arrow fa-2x"></span>
+   </button>
+   <button id="controlMenu">
+    <span class="fa fa-bars fa-2x"></span>
+   </button>
+   <div id="mask" class="mask"></div>
+  </div>
+  <nav id="menu" class="menu menu-push-right">
+   <select id="searchstate">
+    <option value="co">AL</option>
+    <option value="co">AK</option>
+    <option value="co">AZ</option>
+    <option value="co">AR</option>
+    <option value="co">CA</option>
+    <option value="co">CO</option>
+    <option value="co">CT</option>
+    <option value="co">DE</option>
+    <option value="co">FL</option>
+    <option value="co">GA</option>
+    <option value="co">HI</option>
+    <option value="co">ID</option>
+    <option value="co">IL</option>
+    <option value="co">IN</option>
+    <option value="ia">IA</option>
+    <option value="ks" selected="selected">KS</option>
+    <option value="co">KY</option>
+    <option value="co">LA</option>
+    <option value="co">ME</option>
+    <option value="co">MD</option>
+    <option value="co">MA</option>
+    <option value="co">MI</option>
+    <option value="co">MN</option>
+    <option value="co">MS</option>
+    <option value="mo">MO</option>
+    <option value="co">MT</option>
+    <option value="ne">NE</option>
+    <option value="co">NV</option>
+    <option value="co">NH</option>
+    <option value="co">NJ</option>
+    <option value="co">NM</option>
+    <option value="co">NY</option>
+    <option value="co">NC</option>
+    <option value="co">ND</option>
+    <option value="co">OH</option>
+    <option value="ok">OK</option>
+    <option value="co">OR</option>
+    <option value="co">PA</option>
+    <option value="co">RI</option>
+    <option value="co">SC</option>
+    <option value="co">SD</option>
+    <option value="co">TN</option>
+    <option value="co">TX</option>
+    <option value="co">UT</option>
+    <option value="co">VT</option>
+    <option value="co">VA</option>
+    <option value="co">WA</option>
+    <option value="co">WV</option>
+    <option value="co">WI</option>
+    <option value="wy">WY</option>
+   </select>
+   <div id="controlSearchContainer">
+    <input type="text" id="controlSearchInput" placeholder="Search"></input>
+    <button id="controlSearchButton">
+     <span class="fa fa-search fa-2x"></span>
+    </button>
+   </div>
+   <div id="searchresults"></div>
+   <div id="menucontent">
+    <div class="bottom-content">
+     <div class="fineprint">
+      Attribution:<br>
+      &#169; Harris Corp, Earthstar Geographics LLC<br/>
+      &#169; 2017 Intermap Earthstar Geographics SIO<br/>
+      &#169; 2017 Microsoft Corporation<br/>
+      &#169; 2017 HERE<br/>
+      &#169; AND<br/>
+      <a href="http://www.microsoft.com/maps/product/terms.html">Bing Terms of Use</a><br/>
+      Thanks To <a href="https://openlayers.org">OpenLayers</a>
+     </div>
+    </div>
+   </div>
+  </nav>
+ </body>
+</html>
