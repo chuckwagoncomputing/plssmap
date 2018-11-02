@@ -179,11 +179,11 @@ function PLSSUSA() {
     var s = ("_" + textT[i]).slice(-2);
    }
   }
-  var place = state.toUpperCase() + "___" + y + 0 + yd.toUpperCase() + 0 + x + 0 + xd.toUpperCase() + "0SN" + s;
+  var place = state.toUpperCase() + "___" + y + 0 + yd.toUpperCase() + 0 + x + 0 + xd.toUpperCase() + "0%25" + s;
   // Form request
   var url = "https://gis.blm.gov/arcgis/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/2/query?where=FRSTDIVID+LIKE+'" +
             place +
-            "'&layers=2&geometryType=esriGeometryEnvelope&f=json&outFields=FRSTDIVID"
+            "%25'&layers=2&geometryType=esriGeometryEnvelope&f=json&outFields=FRSTDIVID"
   // Show loading indicator.
   document.getElementById('searchresults').textContent = "Loading...";
   // make request
@@ -211,7 +211,7 @@ function PLSSUSA() {
       result.name = divid.substring(5, 7) + divid.substring(8, 9) + " " + divid.substring(10, 12) + divid.substring(13, 14) + " " + divid.substring(17, 19);
       // Get geometry of result
       var e = esrijsonFormat.readGeometry(response.features[i].geometry, {
-       dataProjection: ol.proj.get("EPSG:4326"),
+       dataProjection: ol.proj.get("EPSG:3857"),
        featureProjection: "EPSG:3857"
       }).getExtent();
       // Find center by averaging max and min x,y coordinates
