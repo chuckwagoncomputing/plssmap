@@ -84,6 +84,7 @@ function PLSSUSA() {
 
  var source = new ol.source.Vector({
   loader: function(extent, resolution, projection) {
+console.log("foo")
    var e = PLSSSources[id].extent;
    var v = [(Math.floor(extent[0] / 48000) * 48000), (Math.floor(extent[1] / 48000) * 48000), 0, 0];
    v[2] = v[0] + 48000;
@@ -154,6 +155,7 @@ function PLSSUSA() {
   style: getStyle,
   // Set extent. We'll use it to avoid trying to fetch data that doesn't exist.
   extent: PLSSSources[id].extent,
+  maxResolution: 120,
   id: id
  });
 
