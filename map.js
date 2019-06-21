@@ -384,7 +384,7 @@ function buildMap() {
   }
  });
 
- map.getViewport().addEventListener('click', function() {
+ map.addEventListener('moveend', function() {
   findPLSS();
  });
 }
