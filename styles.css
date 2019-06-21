@@ -38,6 +38,11 @@ html, body, .push-content, .map {
  color: #000000;
 }
 
+.touch .ol-control button:focus {
+ background: #ffffff;
+ color: #000000;
+}
+
 .touch button {
  outline: 0;
 }
