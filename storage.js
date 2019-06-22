@@ -63,11 +63,22 @@ function DSIndexedDB(options, callback) {
   var reqGet = store.get(name);
   reqGet.onsuccess = function(event) {
    if (reqGet.result) {
-    callback(0, reqGet.result.data);
+    callback(0, reqGet.result);
    }
    else {
     callback(1);
    }
+  }
+  reqGet.onerror = function() {
+   callback(1);
+  }
+ }
+
+ this.del = function(name, callback) {
+  var store = db.transaction(storeName).objectStore(storeName);
+  var reqDel = store.del(name);
+  reqGet.onsuccess = function(event) {
+   callback(0);
   }
   reqGet.onerror = function() {
    callback(1);
@@ -151,6 +162,28 @@ function DataStorage(options, callback) {
     }
     else {
      callback(1, data);
+    }
+   });
+  }
+  else if (availableLocalStorage) {
+  }
+  else if (availableWebSQL) {
+  }
+  else {
+   callback(1);
+  }
+ }
+
+ this.del = function(name, callback) {
+  if (availableFileSystem) {
+  }
+  else if (availableIndexedDB) {
+   storeIndexedDB.delete(name, function(e, data) {
+    if (e == 0) {
+     callback(0);
+    }
+    else {
+     callback(1);
     }
    });
   }

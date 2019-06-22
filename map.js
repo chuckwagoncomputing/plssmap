@@ -224,10 +224,10 @@ function sourceSatellite(options) {
   // Get the <img> element from the tile object
   var imgElement = imageTile.getImage();
   // Try getting it from the database
-  storageSatellite.fetch(src, function(e, data) {
+  storageSatellite.fetch(src, function(e, r) {
    // If successful, use it
    if (e == 0) {
-    imgElement.src = data;
+    imgElement.src = r.data;
    }
    // If we didn't have it stored, we'll need to fetch it
    else {

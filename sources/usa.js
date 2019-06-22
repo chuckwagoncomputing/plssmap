@@ -105,10 +105,10 @@ function PLSSUSA() {
      var n = JSON.stringify(v)
      if (!(sourceLocks.indexOf(n) >= 0)) {
       sourceLocks.push(n);
-      storage.fetch(n, function(n, url, e, data) {
+      storage.fetch(n, function(n, url, e, r) {
        // If successful, use it to build features
        if (e == 0) {
-        buildFeatures(data, projection);
+        buildFeatures(r.data, projection);
        }
        // If not, we'll have to fetch it.
        else {
