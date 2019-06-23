@@ -228,6 +228,12 @@ function sourceSatellite(options) {
    // If successful, use it
    if (e == 0) {
     imgElement.src = r.data;
+    dt = new Date()
+    if (dt.setMonth(dt.getMonth() - 1) > new Date(r.dt)) {
+     storageSatellite.del(src, function(e) {
+      console.log("error deleting")
+     });
+    }
    }
    // If we didn't have it stored, we'll need to fetch it
    else {
