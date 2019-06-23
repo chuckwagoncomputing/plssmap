@@ -74,13 +74,13 @@ function DSIndexedDB(options, callback) {
   }
  }
 
- this.del = function(name, callback) {
-  var store = db.transaction(storeName).objectStore(storeName);
-  var reqDel = store.del(name);
-  reqGet.onsuccess = function(event) {
+ this.delete = function(name, callback) {
+  var store = db.transaction(storeName, 'readwrite').objectStore(storeName);
+  var reqDel = store.delete(name);
+  reqDel.onsuccess = function(event) {
    callback(0);
   }
-  reqGet.onerror = function() {
+  reqDel.onerror = function() {
    callback(1);
   }
  }
@@ -178,7 +178,7 @@ function DataStorage(options, callback) {
   if (availableFileSystem) {
   }
   else if (availableIndexedDB) {
-   storeIndexedDB.delete(name, function(e, data) {
+   storeIndexedDB.delete(name, function(e) {
     if (e == 0) {
      callback(0);
     }
