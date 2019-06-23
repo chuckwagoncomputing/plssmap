@@ -237,24 +237,27 @@ function sourceSatellite(options) {
    }
    // If we didn't have it stored, we'll need to fetch it
    else {
-    // Set a handler for when the image loads
-    imgElement.onload = function(e) {
-     // Create a canvas
-     var canvas = document.createElement("canvas");
-     canvas.width = imgElement.width;
-     canvas.height = imgElement.height;
-     var ctx = canvas.getContext("2d");
-     // Copy the image to the canvas
-     ctx.drawImage(imgElement, 0, 0);
-     // Get the image data
-     var data = canvas.toDataURL("image/png");
-     // And store it.
-     storageSatellite.store(src, data, function() {});
-    };
-    // Call Bing Maps' tileLoadFunction.
-    // It will populate the src field for the image element,
-    //  and when the image is done loading our handler will be called.
-    (sourceBing.getTileLoadFunction())(imageTile, src);
+    doLater(1, function(done) {
+     // Set a handler for when the image loads
+     imgElement.onload = function(e) {
+      done()
+      // Create a canvas
+      var canvas = document.createElement("canvas");
+      canvas.width = imgElement.width;
+      canvas.height = imgElement.height;
+      var ctx = canvas.getContext("2d");
+      // Copy the image to the canvas
+      ctx.drawImage(imgElement, 0, 0);
+      // Get the image data
+      var data = canvas.toDataURL("image/png");
+      // And store it.
+      storageSatellite.store(src, data, function() {});
+     };
+     // Call Bing Maps' tileLoadFunction.
+     // It will populate the src field for the image element,
+     //  and when the image is done loading our handler will be called.
+     (sourceBing.getTileLoadFunction())(imageTile, src);
+    }
    }
   });
  }
