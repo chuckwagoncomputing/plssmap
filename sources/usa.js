@@ -109,6 +109,12 @@ function PLSSUSA() {
        // If successful, use it to build features
        if (e == 0) {
         buildFeatures(r.data, projection);
+        dt = new Date()
+        if (dt.setMonth(dt.getMonth() - 1) > new Date(r.dt)) {
+         storageSatellite.del(src, function(e) {
+          console.log("error deleting")
+         });
+        }
        }
        // If not, we'll have to fetch it.
        else {
