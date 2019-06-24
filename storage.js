@@ -77,7 +77,7 @@ function DSIndexedDB(options, callback) {
  this.delete = function(name, callback) {
   var store = db.transaction(storeName, 'readwrite').objectStore(storeName);
   var reqDel = store.delete(name);
-  reqDel.onsuccess = function(event) {
+  reqDel.onsuccess = function() {
    callback(0);
   }
   reqDel.onerror = function() {

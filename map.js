@@ -231,7 +231,29 @@ function sourceSatellite(options) {
     dt = new Date()
     if (dt.setMonth(dt.getMonth() - 1) > new Date(r.dt)) {
      storageSatellite.del(src, function(e) {
-      console.log("error deleting")
+      if (e != 0) {
+       console.log("error deleting")
+      }
+     });
+     doLater(2, function(done) {
+      var img = new Image()
+      img.crossOrigin = "anonymous";
+      // Set a handler for when the image loads
+      img.onload = function(e) {
+       done()
+       // Create a canvas
+       var canvas = document.createElement("canvas");
+       canvas.width = img.width;
+       canvas.height = img.height;
+       var ctx = canvas.getContext("2d");
+       // Copy the image to the canvas
+       ctx.drawImage(img, 0, 0);
+       // Get the image data
+       var data = canvas.toDataURL("image/png");
+       // And store it.
+       storageSatellite.store(src, data, function() {});
+      };
+      img.src = r.name
      });
     }
    }
@@ -257,7 +279,7 @@ function sourceSatellite(options) {
      // It will populate the src field for the image element,
      //  and when the image is done loading our handler will be called.
      (sourceBing.getTileLoadFunction())(imageTile, src);
-    }
+    });
    }
   });
  }

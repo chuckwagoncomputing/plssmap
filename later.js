@@ -22,9 +22,11 @@ function doNow(priority, callback) {
   laterRunning.splice(laterRunning.indexOf(priority), 1)
   if (laterQueue.length != 0) {
    var m = Math.min(...laterRunning)
-   for (var a in laterQueue.filter(j => j.p <= m)) {
-    doNow(a.p, a.c)
-   }
+   laterQueue.forEach(function(f, i) {
+    laterQueue.splice(i, 1)
+    laterRunning.push(f.p)
+    doNow(f.p, f.c)
+   });
   }
  }.bind(priority))
 }
