@@ -369,7 +369,7 @@ function setupGeolocation() {
   projection: view.getProjection(),
   trackingOptions: {
    enableHighAccuracy: true,
-   timeout: 5000,
+   timeout: 6000,
    maxAge: 60000
   }
  });
@@ -399,7 +399,7 @@ function startGeolocation() {
   else {
    updateView()
   }
- }, 5200)
+ }, 6200)
 }
 
 function buildMap() {
