@@ -6,6 +6,11 @@ if (document.URL.indexOf("file://") != 0 && navigator.serviceWorker && window.ca
 var map;
 var geolocation;
 
+var storageSettings = new DataStorage(
+ {name: "settings"},
+ function() {}
+);
+
 function getPLSSSource(id, cb) {
  if (PLSSSources[id]) {
   if (PLSSSources[id].ready) {
@@ -83,7 +88,7 @@ function ControllerCenter() {
   centerButton.addEventListener('click', function() {
    centerOnPosition = !centerOnPosition;
    styleCenterButton(centerOnPosition);
-   updateView();
+   startGeolocation();
   });
  }
 };
@@ -180,19 +185,26 @@ function ControllerSearch() {
 
 // Privileged:
  this.attachStateSelector = function(id) {
-  stateSelector = id;
+  stateSelector = document.getElementById(id);
+  storageSettings.fetch("laststate", function(e, s) {
+   if (e == 0) {
+    stateSelector.value = s.data
+   }
+  })
+  stateSelector.addEventListener("change", function() {
+   storageSettings.store("laststate", stateSelector.value, function() {})
+  })
  }
 
  this.attachSearchField = function(id) {
-  input = id;
+  input = document.getElementById(id);
   // Search when Return/Enter is pressed
-  document.getElementById(input).onkeypress = function(e){
+  input.onkeypress = function(e){
    if (!e) e = window.event;
    var keyCode = e.keyCode || e.which;
    if (keyCode == '13'){
-    var value = document.getElementById(input).value;
-    if (value) {
-     findSection(value, document.getElementById(stateSelector).value);
+    if (input.value) {
+     findSection(input.value, stateSelector.value);
     }
    }
   }
@@ -201,9 +213,8 @@ function ControllerSearch() {
  this.attachSearchButton = function(id) {
   // Search when the button is pressed
   document.getElementById(id).addEventListener('click', function() {
-   var value = document.getElementById(input).value;
-   if (value) {
-    findSection(value, document.getElementById(stateSelector).value);
+   if (input.value) {
+    findSection(input.value, stateSelector.value);
    }
   });
  }
@@ -345,13 +356,12 @@ function updateView() {
   var position = geolocation.getPosition();
   if ( typeof position == "undefined" ) {
    console.log("position undefined");
-   setupGeolocation();
+   controllerCenter.center(false)
   }
   else {
    view.setCenter(geolocation.getPosition());
   }
  }
- findPLSS();
 };
 
 function setupGeolocation() {
@@ -364,7 +374,7 @@ function setupGeolocation() {
   }
  });
 
- // When the accurace changes, change the indicator size.
+ // When the accuracy changes, change the indicator size.
  geolocation.on('change:accuracyGeometry', function() {
   featureAccuracy.setGeometry(geolocation.getAccuracyGeometry());
  });
@@ -377,7 +387,19 @@ function setupGeolocation() {
   updateView();
  });
 
+ startGeolocation()
+}
+
+function startGeolocation() {
  geolocation.setTracking(true);
+ setTimeout(function() {
+  if (!geolocation.getTracking()) {
+   controllerCenter.center(false)
+  }
+  else {
+   updateView()
+  }
+ }, 5200)
 }
 
 function buildMap() {
@@ -399,6 +421,12 @@ function buildMap() {
   ],
   view: view
  });
+
+ storageSettings.fetch("lastpos", function(e, p) {
+  if (e == 0) {
+   map.getView().setCenter(p.data)
+  }
+ })
 
  // Make a listener so we initially snap to our location.
  var update = map.addEventListener('postcompose', function() {
@@ -426,13 +454,16 @@ window.addEventListener('load', function() {
    if (typeof cordova.plugins != "undefined") {
     if (typeof cordova.plugins.permissions != "undefined") {
      var p = cordova.plugins.permissions;
-     p.requestPermission(p.ACCESS_FINE_LOCATION, function(){
-      setTimeout(function(){updateView();}, 2000);
-     }, function(){});
+     p.requestPermission(p.ACCESS_FINE_LOCATION);
     }
    }
   }
+  document.addEventListener('pause', function() {
+   storageSettings.store("lastpos", map.getView().getCenter(), function() {})
+  }, false);
  });
+
+
  // Detect if we are on a touch device, and add class to document.
  // This is so we can style differently.
  if (!("ontouchstart" in document.documentElement)) {

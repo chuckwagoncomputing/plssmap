@@ -112,28 +112,47 @@ function PLSSUSA() {
         dt = new Date()
         if (dt.setMonth(dt.getMonth() - 1) > new Date(r.dt)) {
          storageSatellite.del(src, function(e) {
-          console.log("error deleting")
+          if (e != 0) {
+           console.log("error deleting")
+          }
+         });
+         doLater(2, function(done) {
+          $.ajax({url: url, dataType: 'jsonp', success: function(response) {
+           if (response.error) {
+            // Remove the lock
+            sourceLocks.splice(sourceLocks.indexOf(n), 1);
+            console.log(response.error.message + '\n' +
+                        response.error.details.join('\n'));
+           }
+           else {
+            // Store response so we have it next time.
+            storage.store(n, response, function() {});
+           }
+           done()
+          }})
          });
         }
        }
        // If not, we'll have to fetch it.
        else {
         // Make request
-        doLater(1, function(done) { $.ajax({url: url, dataType: 'jsonp', success: function(response) {
-         if (response.error) {
-          // Remove the lock
-          sourceLocks.splice(sourceLocks.indexOf(n), 1);
-          console.log(response.error.message + '\n' +
-                      response.error.details.join('\n'));
-         }
-         else {
-          // Build features using response
-          buildFeatures(response, projection);
-          // Store response so we have it next time.
-          storage.store(n, response, function() {});
-         }
-         done()
-        }})});
+        doLater(1, function(done) {
+         $.ajax({url: url, dataType: 'jsonp', success: function(response) {
+          if (response.error) {
+           // Remove the lock
+           sourceLocks.splice(sourceLocks.indexOf(n), 1);
+           console.log(response.error.message + '\n' +
+                       response.error.details.join('\n'));
+          }
+          else {
+           // Build features using response
+           buildFeatures(response, projection);
+           // Store response so we have it next time.
+           storage.store(n, response, function() {});
+          }
+          done()
+         }})
+        });
        }
       }.bind(this, n, url));
      }
