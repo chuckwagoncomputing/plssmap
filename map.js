@@ -174,6 +174,7 @@ function ControllerSearch() {
    controllerCenter.center(false);
    // Set center at the result
    view.setCenter([+e.target.dataset.x, +e.target.dataset.y]);
+   view.setZoom(15)
    // Close the menu
    controllerMenu.close();
    // Get the PLSS data.
