@@ -62,10 +62,18 @@ function ControllerMarker() {
   var markers = []
   for (var i = 0; i < sourceMarkers.getFeatures().length; i++) {
    marker = sourceMarkers.getFeatures()[i]
-   markers.push({
-    label: marker.getStyle().getText().getText(),
-    coords: marker.getGeometry().getCoordinates()
-   })
+   if (marker.getStyle().getText()) {
+    markers.push({
+     label: marker.getStyle().getText().getText(),
+     coords: marker.getGeometry().getCoordinates()
+    })
+   }
+   else {
+    markers.push({
+     label: "",
+     coords: marker.getGeometry().getCoordinates()
+    })
+   }
   }
   storageSettings.store("markers", JSON.stringify(markers), function() {})
  }
@@ -100,7 +108,6 @@ function ControllerMarker() {
   markerButton = document.getElementById(id)
   markerButton.addEventListener("click", function(){
    if (isOpen) {
-    sourceMarkers.removeFeature(currentFeature)
     controllerMarker.close()
     return;
    }
