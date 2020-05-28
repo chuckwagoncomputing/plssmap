@@ -49,6 +49,169 @@ var view = new ol.View({
  zoom: 13
 });
 
+function ControllerMarker() {
+ var isOpen = false
+ var drawer
+ var input
+ var markerButton
+ var cancelButton
+ var saveButton
+ var currentMarker
+
+ this.saveMarkers = function() {
+  var markers = []
+  for (var i = 0; i < sourceMarkers.getFeatures().length; i++) {
+   marker = sourceMarkers.getFeatures()[i]
+   markers.push({
+    label: marker.getStyle().getText().getText(),
+    coords: marker.getGeometry().getCoordinates()
+   })
+  }
+  storageSettings.store("markers", JSON.stringify(markers), function() {})
+ }
+
+ this.open = function() {
+  if (!isOpen) {
+   isOpen = true;
+   document.body.classList.add('has-active-menu');
+   document.getElementById('push-content').classList.add('has-slide-bottom');
+   drawer.classList.add('is-active');
+  }
+ }
+
+ this.close = function() {
+  if (isOpen) {
+   isOpen = false;
+   document.body.classList.remove('has-active-menu');
+   document.getElementById('push-content').classList.remove('has-push-right');
+   drawer.classList.remove('is-active');
+  }
+ }
+
+ this.attachDrawer = function(id) {
+  drawer = document.getElementById(id)
+ }
+
+ this.attachInput = function(id) {
+  input = document.getElementById(id)
+ }
+
+ this.attachMarkerButton = function(id) {
+  markerButton = document.getElementById(id)
+  markerButton.addEventListener("click", function(){
+   if (isOpen) {
+    sourceMarkers.removeFeature(currentFeature)
+    controllerMarker.close()
+    return;
+   }
+   var center = map.getView().getCenter()
+   currentFeature = new ol.Feature({
+    geometry: new ol.geom.Point(center),
+   });
+   var iconStyle = new ol.style.Style({
+    image: new ol.style.Icon({
+     anchor: [0.5, 1],
+     anchorXUnits: 'fraction',
+     anchorYUnits: 'fraction',
+     src: 'marker_blue.png'
+    })
+   });
+   currentFeature.setStyle(iconStyle);
+   sourceMarkers.addFeature(currentFeature)
+   controllerMarker.open()
+  });
+ }
+
+ this.attachCancelButton = function(id) {
+  cancelButton = document.getElementById(id)
+  cancelButton.addEventListener("click", function(){
+   controllerMarker.close()
+   sourceMarkers.removeFeature(currentFeature)
+   controllerMarker.saveMarkers()
+  });
+ }
+
+ this.attachSaveButton = function(id) {
+  saveButton = document.getElementById(id)
+  saveButton.addEventListener("click", function(){
+   controllerMarker.close()
+   currentFeature.setStyle(new ol.style.Style({
+    image: new ol.style.Icon({
+     anchor: [0.5, 1],
+     anchorXUnits: 'fraction',
+     anchorYUnits: 'fraction',
+     src: 'marker_blue.png'
+    }),
+    text: new ol.style.Text({
+     text: input.value,
+     textAlign: 'center',
+     textBaseline: 'middle',
+     font: 'normal 1em Verdana',
+     fill: new ol.style.Fill({
+      color: '#0000ff'
+     }),
+     stroke: new ol.style.Stroke({
+      color: '#ffffff',
+      width: 3
+     }),
+     offsetX: 0,
+     offsetY: -50,
+     rotation: 0
+    })
+   }));
+   controllerMarker.saveMarkers()
+  }.bind(this));
+ }
+
+ this.edit = function(ft) {
+  currentFeature = ft
+  var coordinates = currentFeature.getGeometry().getCoordinates();
+  input.value = currentFeature.getStyle().getText().getText()
+  controllerMarker.open()
+ }
+
+ this.setup = function() {
+  storageSettings.fetch("markers", function(e, m) {
+   if (e == 0) {
+    markers = JSON.parse(m.data)
+    for (var i = 0; i < markers.length; i++) {
+     var iconFeature = new ol.Feature({
+      geometry: new ol.geom.Point(markers[i].coords),
+     });
+     var iconStyle = new ol.style.Style({
+      image: new ol.style.Icon({
+       anchor: [0.5, 1],
+       anchorXUnits: 'fraction',
+       anchorYUnits: 'fraction',
+       src: 'marker_blue.png'
+      }),
+      text: new ol.style.Text({
+       text: markers[i].label,
+       textAlign: 'center',
+       textBaseline: 'middle',
+       font: 'normal 1em Verdana',
+       fill: new ol.style.Fill({
+        color: '#0000ff'
+       }),
+       stroke: new ol.style.Stroke({
+        color: '#ffffff',
+        width: 3
+       }),
+       offsetX: 0,
+       offsetY: -50,
+       rotation: 0
+      })
+     });
+     iconFeature.setStyle(iconStyle);
+     sourceMarkers.addFeature(iconFeature);
+    }
+   }
+  }.bind(this))
+ }
+}
+
+var controllerMarker = new ControllerMarker();
+
 // An object to manage the geolocation UI
 function ControllerCenter() {
 // Private:
@@ -84,7 +247,7 @@ function ControllerCenter() {
 
  // Attach the center button so we can listen for clicks and style it
  this.attachCenterButton = function(id) {
-  centerButton = document.getElementById("controlCenter");
+  centerButton = document.getElementById(id);
   centerButton.addEventListener('click', function() {
    centerOnPosition = !centerOnPosition;
    styleCenterButton(centerOnPosition);
@@ -99,6 +262,7 @@ var controllerCenter = new ControllerCenter();
 function ControllerMenu() {
 // Private:
  var isOpen = false;
+ var drawer
 
 // Privileged:
  this.open = function() {
@@ -106,7 +270,7 @@ function ControllerMenu() {
    isOpen = true;
    document.body.classList.add('has-active-menu');
    document.getElementById('push-content').classList.add('has-push-right');
-   document.getElementById('menu').classList.add('is-active');
+   drawer.classList.add('is-active');
    document.getElementById('mask').classList.add('is-active');
   }
  }
@@ -116,19 +280,24 @@ function ControllerMenu() {
    isOpen = false;
    document.body.classList.remove('has-active-menu');
    document.getElementById('push-content').classList.remove('has-push-right');
-   document.getElementById('menu').classList.remove('is-active');
+   drawer.classList.remove('is-active');
    document.getElementById('mask').classList.remove('is-active');
   }
  }
 
  this.attachMenuButton = function(id) {
   document.getElementById(id).addEventListener('click', function() {
+   controllerMarker.close();
    this.open();
   }.bind(this));
   document.getElementById('mask').addEventListener('click', function(e) {
    e.preventDefault();
    this.close();
   }.bind(this));
+ }
+
+ this.attachDrawer = function(id) {
+  drawer = document.getElementById(id)
  }
 }
 
@@ -328,6 +497,16 @@ var layerGeolocation = new ol.layer.Vector({
  }),
 });
 
+var sourceMarkers = new ol.source.Vector({
+ features: []
+});
+
+var layerMarkers = new ol.layer.Vector({
+ source: sourceMarkers,
+ zIndex: 1
+});
+
+
 function findPLSS() {
  var e = map.getView().calculateExtent(map.getSize());
  for (var id in PLSSSources) {
@@ -403,8 +582,96 @@ function startGeolocation() {
  }, 6200)
 }
 
+var Drag = (function (PointerInteraction) {
+  function Drag() {
+    PointerInteraction.call(this, {
+      handleDownEvent: handleDownEvent,
+      handleDragEvent: handleDragEvent,
+      handleMoveEvent: handleMoveEvent,
+      handleUpEvent: handleUpEvent
+    });
+
+    this.coordinate_ = null;
+
+    this.cursor_ = 'pointer';
+
+    this.feature_ = null;
+
+    this.previousCursor_ = undefined;
+  }
+
+  if ( PointerInteraction ) Drag.__proto__ = PointerInteraction;
+  Drag.prototype = Object.create( PointerInteraction && PointerInteraction.prototype );
+  Drag.prototype.constructor = Drag;
+
+  return Drag;
+}(ol.interaction.Pointer));
+
+function handleDownEvent(evt) {
+  var map = evt.map;
+
+  var feature = map.forEachFeatureAtPixel(evt.pixel,
+    function(feature) {
+      return feature;
+    });
+
+  if (feature && feature.getStyle()) {
+   if (feature.getStyle().getImage() != "undefined") {
+    this.coordinate_ = evt.coordinate;
+    this.feature_ = feature;
+   }
+   else {
+    return false;
+   }
+  }
+  else {
+   return false;
+  }
+
+  return !!feature;
+}
+
+function handleDragEvent(evt) {
+  var deltaX = evt.coordinate[0] - this.coordinate_[0];
+  var deltaY = evt.coordinate[1] - this.coordinate_[1];
+
+  var geometry = this.feature_.getGeometry();
+  geometry.translate(deltaX, deltaY);
+
+  this.coordinate_[0] = evt.coordinate[0];
+  this.coordinate_[1] = evt.coordinate[1];
+}
+
+function handleMoveEvent(evt) {
+  if (this.cursor_) {
+    var map = evt.map;
+    var feature = map.forEachFeatureAtPixel(evt.pixel,
+      function(feature) {
+        return feature;
+      });
+    var element = evt.map.getTargetElement();
+    if (feature) {
+      if (element.style.cursor != this.cursor_) {
+        this.previousCursor_ = element.style.cursor;
+        element.style.cursor = this.cursor_;
+      }
+    } else if (this.previousCursor_ !== undefined) {
+      element.style.cursor = this.previousCursor_;
+      this.previousCursor_ = undefined;
+    }
+  }
+}
+
+function handleUpEvent() {
+  this.coordinate_ = null;
+  this.feature_ = null;
+  controllerMarker.saveMarkers();
+  return false;
+}
+
 function buildMap() {
  setupGeolocation();
+ controllerMarker.setup();
 
  map = new ol.Map({
   target: document.getElementById('map'),
@@ -418,9 +685,11 @@ function buildMap() {
      maxZoom: 19
     })
    }),
-   layerGeolocation
+   layerGeolocation,
+   layerMarkers
   ],
-  view: view
+  view: view,
+  interactions: ol.interaction.defaults().extend([new Drag()])
  });
 
  storageSettings.fetch("lastpos", function(e, p) {
@@ -446,6 +715,18 @@ function buildMap() {
 
  map.addEventListener('moveend', function() {
   findPLSS();
+ });
+
+ map.on('singleclick', function(e) {
+  var feature = map.forEachFeatureAtPixel(e.pixel,
+   function(feature) {
+    return feature;
+  });
+  if (feature && feature.getStyle()) {
+   if (feature.getStyle().getImage() != "undefined") {
+    controllerMarker.edit(feature)
+   }
+  }
  });
 }
 
@@ -474,8 +755,14 @@ window.addEventListener('load', function() {
   document.documentElement.className += " touch";
  }
  buildMap();
+ controllerMarker.attachInput("markerName");
+ controllerMarker.attachMarkerButton("controlMarker");
+ controllerMarker.attachCancelButton("buttonCancelMarker");
+ controllerMarker.attachSaveButton("buttonSaveMarker");
+ controllerMarker.attachDrawer("markerInput")
  controllerCenter.attachCenterButton("controlCenter");
  controllerMenu.attachMenuButton("controlMenu");
+ controllerMenu.attachDrawer("menu")
  controllerSearch.attachStateSelector("searchstate");
  controllerSearch.attachSearchField("controlSearchInput");
  controllerSearch.attachSearchButton("controlSearchButton");

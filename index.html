@@ -24,6 +24,9 @@
   </template>
   <div class="push-content" id="push-content">
    <div id="map" class="map"></div>
+   <button id="controlMarker">
+    <span class="fa fa-map-marker fa-2x"></span>
+   </button>
    <button id="controlCenter">
     <span class="fa fa-location-arrow fa-2x"></span>
    </button>
@@ -32,6 +35,14 @@
    </button>
    <div id="mask" class="mask"></div>
   </div>
+  <nav id="markerInput" class="menu menu-slide-bottom">
+   <input id="markerName" type="text" placeholder="Marker Label (optional)"></input>
+   <br/>
+   <div id="buttonContainer">
+    <button id="buttonCancelMarker">Delete</button>
+    <button id="buttonSaveMarker">Save</button>
+   </div>
+  </nav>
   <nav id="menu" class="menu menu-push-right">
    <select id="searchstate">
     <option value="al">AL</option>

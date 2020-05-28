@@ -91,6 +91,25 @@ html, body, .push-content, .map {
  color: #ffffff;
 }
 
+#controlMarker {
+ position: absolute;
+ z-index: 1;
+ width: 50px;
+ height: 50px;
+ background: #ffffff;
+ color: #000000;
+ border-radius: 50%;
+ border: 2px solid #0000ff;
+ margin: 10px;
+ left: 0;
+ top: 120px;
+}
+
+.no-touch #controlMarker:hover {
+ background: rgba(0, 60, 136, 0.7) !important;
+ color: #ffffff !important;
+}
+
 #controlCenter {
  position: absolute;
  z-index: 1;
@@ -124,6 +143,11 @@ html, body, .push-content, .map {
  top: 0;
 }
 
+.no-touch #controlMenu:hover {
+ background: rgba(0, 60, 136, 0.7) !important;
+ color: #ffffff !important;
+}
+
 body.has-active-menu {
   overflow: hidden;
 }
@@ -143,6 +167,14 @@ body.has-active-menu {
  transform: translateX(100%);
 }
 
+.menu-slide-bottom {
+ width: 100%;
+ height: auto;
+ bottom: 0;
+ right: 0;
+ transform: translateY(100px);
+}
+
 @media all and (min-width: 320px) {
  .menu-push-right {
   width: 300px;
@@ -152,6 +184,10 @@ body.has-active-menu {
 
 .menu-push-right.is-active {
  transform: translateX(0);
+}
+
+.menu-slide-bottom.is-active {
+ transform: translateY(0);
 }
 
 .mask {
@@ -269,3 +305,22 @@ body.has-active-menu {
  font-size: 10px;
 }
 
+#markerName {
+ width: calc(100% - 30px);
+ margin: 5px;
+}
+
+#buttonContainer {
+ display: flex;
+ width: 100%;
+}
+
+#buttonCancelMarker {
+ flex: 1 1;
+ margin: 5px;
+}
+
+#buttonSaveMarker {
+ flex: 1 1;
+ margin: 5px;
+}
