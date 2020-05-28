@@ -7,6 +7,8 @@
   <link rel="shortcut icon" type="image/png" href="plss-neon.png"/>
   <script src="cordova.js"></script>
   <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+  <link rel="stylesheet" href="./material.min.css">
+  <script src="./material.min.js"></script>
   <script src="proj4.js"></script>
   <script src="ol.js"></script>
   <link rel="stylesheet" href="ol.css">
@@ -36,11 +38,14 @@
    <div id="mask" class="mask"></div>
   </div>
   <nav id="markerInput" class="menu menu-slide-bottom">
-   <input id="markerName" type="text" placeholder="Marker Label (optional)"></input>
+   <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+    <input class="mdl-textfield__input" type="text" id="markerName">
+    <label class="mdl-textfield__label" for="markerName">Marker Label (optional)</label>
+   </div>
    <br/>
    <div id="buttonContainer">
-    <button id="buttonCancelMarker">Delete</button>
-    <button id="buttonSaveMarker">Save</button>
+    <button id="buttonCancelMarker" class="mdl-button mdl-js-button mdl-button--raised">Delete</button>
+    <button id="buttonSaveMarker" class="mdl-button mdl-js-button mdl-button--raised">Save</button>
    </div>
   </nav>
   <nav id="menu" class="menu menu-push-right">
@@ -76,8 +81,11 @@
     <option value="wy">WY</option>
    </select>
    <div id="controlSearchContainer">
-    <input type="text" id="controlSearchInput" placeholder="Search"></input>
-    <button id="controlSearchButton">
+    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+     <input class="mdl-textfield__input" type="text" id="controlSearchInput">
+     <label class="mdl-textfield__label" for="controlSearchInput">Search</label>
+    </div>
+    <button id="controlSearchButton" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
      <span class="fa fa-search fa-2x"></span>
     </button>
    </div>

@@ -172,7 +172,7 @@ body.has-active-menu {
  height: auto;
  bottom: 0;
  right: 0;
- transform: translateY(100px);
+ transform: translateY(100%);
 }
 
 @media all and (min-width: 320px) {
@@ -232,30 +232,18 @@ body.has-active-menu {
 
 #controlSearchContainer {
  position: relative;
+ display: flex;
  height: 50px;
  z-index: 3;
- border-bottom: 2px solid #0000ff;
 }
 
 #controlSearchInput {
- position: absolute;
- height: 100%;
- width: 75%;
- left: 0;
- top: 0;
- padding: 0;
- border: none;
- background: #ffffff;
- font-size: 32px;
+ flex: 1 1;
 }
 
 #controlSearchButton {
- position: absolute;
- height: 100%;
- width: 25%;
- right: 0;
- top: 0;
- border: none;
+ flex: 0 0;
+ font-size: 10px;
 }
 
 #searchresults {
@@ -306,7 +294,7 @@ body.has-active-menu {
 }
 
 #markerName {
- width: calc(100% - 30px);
+ width: 100%;
  margin: 5px;
 }
 
