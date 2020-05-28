@@ -188,8 +188,11 @@ function PLSSUSA() {
   // Strip non-alphanumeric, remove leading and trailing spaces, and
   //  split into an array of (1+)space-separated values.
   var textT = text.replace(/[^0-9a-z]/gi, ' ').trim().split(/\s+/);
-  var x,y,s = "__";
-  var xd,yd = "_";
+  var x = "__";
+  var y = "__";
+  var s = "__";
+  var xd = "_";
+  var yd = "_";
   for (var i in textT) {
    // Is this a West/East value?
    if (/[0-9]{1,2}[W,E,w,e]/.test(textT[i])) {
