@@ -90,6 +90,7 @@ function ControllerMarker() {
  this.close = function() {
   if (isOpen) {
    isOpen = false;
+   input.value = ""
    document.body.classList.remove('has-active-menu');
    document.getElementById('push-content').classList.remove('has-push-right');
    drawer.classList.remove('is-active');
