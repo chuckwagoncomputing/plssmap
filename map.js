@@ -173,7 +173,12 @@ function ControllerMarker() {
  this.edit = function(ft) {
   currentFeature = ft
   var coordinates = currentFeature.getGeometry().getCoordinates();
-  input.value = currentFeature.getStyle().getText().getText()
+  if (currentFeature.getStyle().getText()) {
+   input.value = currentFeature.getStyle().getText().getText()
+  }
+  else {
+   input.value = ""
+  }
   controllerMarker.open()
  }
 
@@ -733,6 +738,9 @@ function buildMap() {
    if (feature.getStyle().getImage() != "undefined") {
     controllerMarker.edit(feature)
    }
+  }
+  else {
+   controllerMarker.close()
   }
  });
 }
