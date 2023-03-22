@@ -157,6 +157,9 @@ body.has-active-menu {
  z-index: 2;
  background-color: #ffffff;
  transition: transform 0.3s;
+ display: flex;
+ flex-direction: column;
+ max-height: 100vh;
 }
 
 .menu-push-right {
@@ -228,6 +231,7 @@ body.has-active-menu {
  height: 50px;
  z-index: 3;
  width: 100%;
+ border: 2px solid #0000ff;
 }
 
 #controlSearchContainer {
@@ -251,26 +255,25 @@ body.has-active-menu {
  font-size: 10px;
  margin-left: 5px;
  margin-right: 5px;
+ border: 2px solid #0000ff;
 }
 
 #searchresults {
  width: 100%;
- height: calc(100% - 200px);
- overflow: auto;
+ overflow: scroll;
  z-index: 1;
- margin-bottom: 160px;
+ margin-bottom: 2px;
  font-size: 32px;
  text-align: center;
-}
-
-#searchresults:last-child {
  border-bottom: 2px solid #0000ff;
+ flex: 1;
 }
 
 .search-result-button {
  width: 100%;
  height: 50px;
  font-size: 32px;
+ border: 2px solid #0000ff;
  border-left: none;
  border-right: none;
 }
@@ -287,11 +290,10 @@ body.has-active-menu {
 
 #menucontent {
  z-index: 2;
+ flex: 0 0 auto;
 }
 
 .bottom-content {
- position: absolute;
- bottom: 0;
  width: 100%
 }
 
@@ -327,4 +329,11 @@ body.has-active-menu {
  display: inline;
  border: 2px solid #0000ff;
  height: 50px;
+}
+
+.tabView {
+ flex: 1;
+ display: inline-flex;
+ flex-direction: column;
+ min-height: 0;
 }

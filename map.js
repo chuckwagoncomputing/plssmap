@@ -316,7 +316,7 @@ function ControllerMenu() {
 
  this.attachSearchTabButton = function(id) {
   document.getElementById(id).addEventListener('click', function() {
-   document.getElementById("searchView").style.display = ""
+   document.getElementById("searchView").style.display = "inline-flex"
    document.getElementById("markerView").style.display = "none"
   });
  }
@@ -324,7 +324,7 @@ function ControllerMenu() {
  this.attachMarkerTabButton = function(id) {
   document.getElementById(id).addEventListener('click', function() {
    document.getElementById("searchView").style.display = "none"
-   document.getElementById("markerView").style.display = ""
+   document.getElementById("markerView").style.display = "inline-flex"
    this.populateMarkerList();
   }.bind(this));
  }
