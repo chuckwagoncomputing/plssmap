@@ -304,6 +304,7 @@ body.has-active-menu {
  background: #ffffff;
  font-size: 10px;
  line-height: 10px;
+ text-align: center;
 }
 
 #labelInputContainer {
