@@ -204,9 +204,23 @@ function PLSSUSA() {
     var y = ("_" + parseInt(textT[i])).slice(-2);
     var yd = textT[i].replace(/\d+/, '');
    }
-   // Or a section number?
+   // Or a plain number?
    else if (/[0-9]{1,2}/.test(textT[i])) {
-    var s = ("_" + textT[i]).slice(-2);
+    // Assume section number if we don't have one.
+    // Try filling section first. This will take care of the convention I've noticed
+    //    of using "<section> <n/s> <e/w>" without any marker letters.
+    // If they use marker letters, the order doesn't matter, because x and y are filled
+    //    before we get here.
+    // If they use something like "<n/s> <e/w> <section>" without marker letters, they're
+    //    out of luck.
+    if (s == "__") {
+     var s = ("_" + textT[i]).slice(-2);
+    // Next we'll try Y (N/S) because that usually comes before E/W
+    } else if (y == "__") {
+     var y = ("_" + parseInt(textT[i])).slice(-2);
+    } else if (x == "__") {
+     var x = ("_" + parseInt(textT[i])).slice(-2);
+    }
    }
   }
   var place = state.toUpperCase() + "___" + y + 0 + yd.toUpperCase() + 0 + x + 0 + xd.toUpperCase() + "0%25" + s;
