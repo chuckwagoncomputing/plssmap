@@ -111,7 +111,7 @@ function PLSSUSA() {
         buildFeatures(r.data, projection);
         dt = new Date()
         if (dt.setMonth(dt.getMonth() - 1) > new Date(r.dt)) {
-         storageSatellite.del(src, function(e) {
+         storageSatellite.del(n, function(e) {
           if (e != 0) {
            console.log("error deleting")
           }

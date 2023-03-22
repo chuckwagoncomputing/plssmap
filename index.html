@@ -49,47 +49,52 @@
    </div>
   </nav>
   <nav id="menu" class="menu menu-push-right">
-   <select id="searchstate">
-    <option value="al">AL</option>
-    <option value="az">AZ</option>
-    <option value="ar">AR</option>
-    <option value="ca">CA</option>
-    <option value="co">CO</option>
-    <option value="fl">FL</option>
-    <option value="ia">IA</option>
-    <option value="id">ID</option>
-    <option value="il">IL</option>
-    <option value="in">IN</option>
-    <option value="ks" selected="selected">KS</option>
-    <option value="la">LA</option>
-    <option value="mi">MI</option>
-    <option value="mn">MN</option>
-    <option value="ms">MS</option>
-    <option value="mo">MO</option>
-    <option value="mt">MT</option>
-    <option value="nd">ND</option>
-    <option value="ne">NE</option>
-    <option value="nm">NM</option>
-    <option value="nv">NV</option>
-    <option value="oh">OH</option>
-    <option value="ok">OK</option>
-    <option value="or">OR</option>
-    <option value="sd">SD</option>
-    <option value="ut">UT</option>
-    <option value="wa">WA</option>
-    <option value="wi">WI</option>
-    <option value="wy">WY</option>
-   </select>
-   <div id="controlSearchContainer">
-    <div id="searchInputContainer" class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-     <input class="mdl-textfield__input" type="text" id="controlSearchInput">
-     <label class="mdl-textfield__label" for="controlSearchInput">Search</label>
+   <div id="searchView">
+    <select id="searchstate">
+     <option value="al">AL</option>
+     <option value="az">AZ</option>
+     <option value="ar">AR</option>
+     <option value="ca">CA</option>
+     <option value="co">CO</option>
+     <option value="fl">FL</option>
+     <option value="ia">IA</option>
+     <option value="id">ID</option>
+     <option value="il">IL</option>
+     <option value="in">IN</option>
+     <option value="ks" selected="selected">KS</option>
+     <option value="la">LA</option>
+     <option value="mi">MI</option>
+     <option value="mn">MN</option>
+     <option value="ms">MS</option>
+     <option value="mo">MO</option>
+     <option value="mt">MT</option>
+     <option value="nd">ND</option>
+     <option value="ne">NE</option>
+     <option value="nm">NM</option>
+     <option value="nv">NV</option>
+     <option value="oh">OH</option>
+     <option value="ok">OK</option>
+     <option value="or">OR</option>
+     <option value="sd">SD</option>
+     <option value="ut">UT</option>
+     <option value="wa">WA</option>
+     <option value="wi">WI</option>
+     <option value="wy">WY</option>
+    </select>
+    <div id="controlSearchContainer">
+     <div id="searchInputContainer" class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+      <input class="mdl-textfield__input" type="text" id="controlSearchInput">
+      <label class="mdl-textfield__label" for="controlSearchInput">Search</label>
+     </div>
+     <button id="controlSearchButton" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+      <span class="fa fa-search fa-2x"></span>
+     </button>
     </div>
-    <button id="controlSearchButton" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
-     <span class="fa fa-search fa-2x"></span>
-    </button>
+    <div id="searchresults"></div>
    </div>
-   <div id="searchresults"></div>
+   <div id="markerView" style="display:none;">
+    <div id="markerlist"></div>
+   </div>
    <div id="menucontent">
     <div class="bottom-content">
      <div class="fineprint">
@@ -101,6 +106,9 @@
       &#169; AND<br/>
       <a href="http://www.microsoft.com/maps/product/terms.html">Bing Terms of Use</a><br/>
       Thanks To <a href="https://openlayers.org">OpenLayers</a>
+     </div>
+     <div class="tabs">
+      <button class="tabButton" id="searchTabButton">Search</button><button class="tabButton" id="markerTabButton">Markers</button>
      </div>
     </div>
    </div>

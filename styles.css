@@ -320,3 +320,11 @@ body.has-active-menu {
  flex: 1 1;
  margin: 5px;
 }
+
+.tabButton {
+ width: calc(50% - 2px);
+ margin: 1px;
+ display: inline;
+ border: 2px solid #0000ff;
+ height: 50px;
+}

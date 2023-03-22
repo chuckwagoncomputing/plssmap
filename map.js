@@ -285,6 +285,7 @@ function ControllerMenu() {
    document.getElementById('push-content').classList.add('has-push-right');
    drawer.classList.add('is-active');
    document.getElementById('mask').classList.add('is-active');
+   this.populateMarkerList();
   }
  }
 
@@ -311,6 +312,55 @@ function ControllerMenu() {
 
  this.attachDrawer = function(id) {
   drawer = document.getElementById(id)
+ }
+
+ this.attachSearchTabButton = function(id) {
+  document.getElementById(id).addEventListener('click', function() {
+   document.getElementById("searchView").style.display = ""
+   document.getElementById("markerView").style.display = "none"
+  });
+ }
+
+ this.attachMarkerTabButton = function(id) {
+  document.getElementById(id).addEventListener('click', function() {
+   document.getElementById("searchView").style.display = "none"
+   document.getElementById("markerView").style.display = ""
+   this.populateMarkerList();
+  }.bind(this));
+ }
+
+ function clearMarkerList() {
+  document.getElementById('markerlist').textContent = "";
+ }
+
+ this.populateMarkerList = function() {
+  clearMarkerList();
+  for (var i = 0; i < sourceMarkers.getFeatures().length; i++) {
+   marker = sourceMarkers.getFeatures()[i]
+   if (marker.getStyle().getText()) {
+    // Get the result template
+    var template = document.getElementById("searchResult");
+    // Fill it in with our data
+    var button = template.content.querySelector(".search-result-button");
+    button.textContent = marker.getStyle().getText().getText();
+    button.dataset.x = marker.getGeometry().getCoordinates()[0];
+    button.dataset.y = marker.getGeometry().getCoordinates()[1];
+    // Create the element
+    var clone = document.importNode(template.content, true);
+    // Add an event listener
+    clone.querySelector(".search-result-button").addEventListener('click', function(e) {
+     // Disable centering
+     controllerCenter.center(false);
+     // Set center at the result
+     view.setCenter([+e.target.dataset.x, +e.target.dataset.y]);
+     view.setZoom(15)
+     // Close the menu
+     controllerMenu.close();
+    });
+    // Add the element to the search results
+    document.getElementById("markerlist").appendChild(clone);
+   }
+  }
  }
 }
 
@@ -779,6 +829,8 @@ window.addEventListener('load', function() {
  controllerCenter.attachCenterButton("controlCenter");
  controllerMenu.attachMenuButton("controlMenu");
  controllerMenu.attachDrawer("menu")
+ controllerMenu.attachSearchTabButton("searchTabButton")
+ controllerMenu.attachMarkerTabButton("markerTabButton")
  controllerSearch.attachStateSelector("searchstate");
  controllerSearch.attachSearchField("controlSearchInput");
  controllerSearch.attachSearchButton("controlSearchButton");
