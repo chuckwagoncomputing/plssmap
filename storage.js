@@ -109,7 +109,6 @@ function DataStorage(options, callback) {
   }
   callback(0);
  }
-
  // Check what storage methods are available
  if (window.indexedDB) {
   // Create IndexedDB store

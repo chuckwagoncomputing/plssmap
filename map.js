@@ -5,11 +5,8 @@ if (document.URL.indexOf("file://") != 0 && navigator.serviceWorker && window.ca
 // This will hold our OpenLayers map object
 var map;
 var geolocation;
-
-var storageSettings = new DataStorage(
- {name: "settings"},
- function() {}
-);
+var storageSettings;
+var storageSatellite;
 
 function getPLSSSource(id, cb) {
  if (PLSSSources[id]) {
@@ -455,10 +452,6 @@ function ControllerSearch() {
 
 var controllerSearch = new ControllerSearch();
 
-var storageSatellite = new DataStorage({
- name: 'satellite'
-}, function() {});
-
 function sourceSatellite(options) {
  // We inherit from the Bing Maps source
  ol.source.BingMaps.call(this, options);
@@ -820,7 +813,17 @@ window.addEventListener('load', function() {
  else {
   document.documentElement.className += " touch";
  }
- buildMap();
+ storageSatellite = new DataStorage(
+  {name: 'satellite'},
+  function() {
+   storageSettings = new DataStorage(
+    {name: "settings"},
+    function() {
+     buildMap();
+    }
+   );
+  }
+ );
  controllerMarker.attachInput("markerName");
  controllerMarker.attachMarkerButton("controlMarker");
  controllerMarker.attachCancelButton("buttonCancelMarker");
