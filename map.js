@@ -372,9 +372,11 @@ function ControllerSearch() {
   clearResults();
   // Show loading indicator.
   document.getElementById('searchresults').textContent = "Loading...";
-  getPLSSSource('usa', function(ret) {
+  plsssource = source.split("-")[0]
+  sourcedivision = source.split("-")[1]
+  getPLSSSource(plsssource, function(ret) {
    if (typeof ret == "object") {
-    ret.search(source, text, newResult, notFound, clearResults);
+    ret.search(sourcedivision, text, newResult, notFound, clearResults);
    }
   });
  }
