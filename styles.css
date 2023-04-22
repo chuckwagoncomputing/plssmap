@@ -339,5 +339,5 @@ body.has-active-menu {
  flex: 1;
  display: inline-flex;
  flex-direction: column;
- min-height: fit-content;
+ min-height: 0;
 }
