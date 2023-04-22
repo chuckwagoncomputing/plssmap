@@ -195,13 +195,13 @@ function PLSSCAMB() {
   var mer = "__";
   pieces = text.split(" ");
   for (var i = 0; i < pieces.length; i++) {
-   if (qtr == "" && i == 0 && "seswnenw".indexOf(pieces[i].toLowerCase())) {
+   if (qtr == "__" && i == 0 && "seswnenw".indexOf(pieces[i].toLowerCase())) {
     qtr = pieces[i].toUpperCase().padStart(2, '_');
-   } else if (sec == "" && !isNaN(parseInt(pieces[i]))) {
+   } else if (sec == "__" && !isNaN(parseInt(pieces[i]))) {
     sec = pieces[i].padStart(2, '_');
-   } else if (twp == "" && !isNaN(parseInt(pieces[i]))) {
+   } else if (twp == "___" && !isNaN(parseInt(pieces[i]))) {
     twp = pieces[i].padStart(3, '_');
-   } else if (rge == "" && !isNaN(parseInt(pieces[i]))) {
+   } else if (rge == "__" && !isNaN(parseInt(pieces[i]))) {
     rge = pieces[i].padStart(2, '_');
    } else {
     mer = pieces[i].toUpperCase().padStart(2, '_');
