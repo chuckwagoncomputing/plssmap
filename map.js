@@ -7,13 +7,13 @@ var map;
 var geolocation;
 var storageSettings;
 var storageSatellite;
+var controllerSearch;
 
 function getPLSSSource(id, cb) {
  if (PLSSSources[id]) {
   if (PLSSSources[id].ready) {
    cb(PLSSSources[id].obj);
-  }
-  else if (!PLSSSources[id].loading) {
+  } else if (!PLSSSources[id].loading) {
    PLSSSources[id].loading = true;
    var el = document.createElement('script');
    el.src = ('./sources/' + id + '.js');
@@ -450,8 +450,6 @@ function ControllerSearch() {
  }
 }
 
-var controllerSearch = new ControllerSearch();
-
 function sourceSatellite(options) {
  // We inherit from the Bing Maps source
  ol.source.BingMaps.call(this, options);
@@ -562,6 +560,7 @@ var layerMarkers = new ol.layer.Vector({
  zIndex: 1
 });
 
+var PLSSLock = 0;
 
 function findPLSS() {
  var e = map.getView().calculateExtent(map.getSize());
@@ -576,10 +575,12 @@ function findPLSS() {
      break;
     }
    }
-   if (!found) {
+   if (!found && PLSSLock == 0) {
+    PLSSLock = 1;
     getPLSSSource(id, function(ret) {
      if (typeof ret == "object") {
       map.addLayer(ret.layer);
+      PLSSLock = 0;
      }
     });
    }
@@ -819,22 +820,23 @@ window.addEventListener('load', function() {
    storageSettings = new DataStorage(
     {name: "settings"},
     function() {
+     controllerSearch = new ControllerSearch();
      buildMap();
+     controllerMarker.attachInput("markerName");
+     controllerMarker.attachMarkerButton("controlMarker");
+     controllerMarker.attachCancelButton("buttonCancelMarker");
+     controllerMarker.attachSaveButton("buttonSaveMarker");
+     controllerMarker.attachDrawer("markerInput")
+     controllerCenter.attachCenterButton("controlCenter");
+     controllerMenu.attachMenuButton("controlMenu");
+     controllerMenu.attachDrawer("menu")
+     controllerMenu.attachSearchTabButton("searchTabButton")
+     controllerMenu.attachMarkerTabButton("markerTabButton")
+     controllerSearch.attachStateSelector("searchstate");
+     controllerSearch.attachSearchField("controlSearchInput");
+     controllerSearch.attachSearchButton("controlSearchButton");
     }
    );
   }
  );
- controllerMarker.attachInput("markerName");
- controllerMarker.attachMarkerButton("controlMarker");
- controllerMarker.attachCancelButton("buttonCancelMarker");
- controllerMarker.attachSaveButton("buttonSaveMarker");
- controllerMarker.attachDrawer("markerInput")
- controllerCenter.attachCenterButton("controlCenter");
- controllerMenu.attachMenuButton("controlMenu");
- controllerMenu.attachDrawer("menu")
- controllerMenu.attachSearchTabButton("searchTabButton")
- controllerMenu.attachMarkerTabButton("markerTabButton")
- controllerSearch.attachStateSelector("searchstate");
- controllerSearch.attachSearchField("controlSearchInput");
- controllerSearch.attachSearchButton("controlSearchButton");
 });

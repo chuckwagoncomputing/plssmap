@@ -26,9 +26,7 @@ function DSIndexedDB(options, callback) {
   if (! db.objectStoreNames.contains(storeName)) {
    // Create it if it doesn't exist
    var store = db.createObjectStore(storeName, {keyPath: 'name', autoIncrement: false, storage: 'persistent'});
-   store.transaction.oncomplete = function(e) {
-    callback(0);
-   };
+   store.transaction.oncomplete = function(e) {};
 
    store.transaction.onerror = function() {
     callback(1);
