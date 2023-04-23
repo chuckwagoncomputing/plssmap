@@ -10,11 +10,7 @@ function PLSSCAMB() {
    return '';
   }
   else {
-   return feature.get('QTR_CODE')
-   + "-" + feature.get('SEC_CODE').replace(/^0+/, '')
-   + "-" + feature.get('TWP_CODE').replace(/^0+/, '')
-   + "-" + feature.get('RGE_CODE').replace(/^0+/, '')
-   + "-" + feature.get('MER_CODE');
+   return feature.get('QTR_DESCRIPTION_EN');
   }
  }
 
@@ -195,7 +191,7 @@ function PLSSCAMB() {
   var mer = "__";
   pieces = text.split(" ");
   for (var i = 0; i < pieces.length; i++) {
-   if (qtr == "__" && i == 0 && "seswnenw".indexOf(pieces[i].toLowerCase())) {
+   if (qtr == "__" && i == 0 && "seswnenw".indexOf(pieces[i].toLowerCase()) >= 0) {
     qtr = pieces[i].toUpperCase().padStart(2, '_');
    } else if (sec == "__" && !isNaN(parseInt(pieces[i]))) {
     sec = pieces[i].padStart(2, '_');
@@ -218,7 +214,7 @@ function PLSSCAMB() {
             rge +
             "'+AND+MER_CODE+LIKE+'" +
             mer +
-            "'&layers=2&geometryType=esriGeometryEnvelope&f=json&outFields=QTR_CODE,SEC_CODE,TWP_CODE,RGE_CODE,MER_CODE"
+            "'&layers=2&geometryType=esriGeometryEnvelope&f=json&outFields=QTR_DESCRIPTION_EN"
   // Show loading indicator.
   document.getElementById('searchresults').textContent = "Loading...";
   // make request
@@ -242,12 +238,7 @@ function PLSSCAMB() {
       var result = {};
       // Get the legal name, trim leading and trailing spaces, and replace multiple spaces with
       //  a single space.
-      var qtr = response.features[i].attributes.QTR_CODE;
-      var sec = response.features[i].attributes.SEC_CODE;
-      var twp = response.features[i].attributes.TWP_CODE;
-      var rge = response.features[i].attributes.RGE_CODE;
-      var mer = response.features[i].attributes.MER_CODE;
-      result.name = qtr + "-" + sec.replace(/^0+/, '') + "-" + twp.replace(/^0+/, '') + "-" + rge.replace(/^0+/, '') + "-" + mer
+      result.name = response.features[i].attributes.QTR_DESCRIPTION_EN;
       // Get geometry of result
       var e = esrijsonFormat.readGeometry(response.features[i].geometry, {
        dataProjection: ol.proj.get("EPSG:3857"),
