@@ -421,11 +421,25 @@ function ControllerSearch() {
   storageSettings.fetch("laststate", function(e, s) {
    if (e == 0) {
     stateSelector.value = s.data
+    labels = document.getElementsByTagName('label');
+    for (var i = 0; i < labels.length; i++ ) {
+     if (labels[i].htmlFor == input.id) {
+      var s = stateSelector.value.split("-")[0]
+      labels[i].textContent = "Try " + PLSSSources[s].hint;
+     }
+    }
    }
   })
   stateSelector.addEventListener("change", function() {
    storageSettings.store("laststate", stateSelector.value, function() {})
-  })
+   labels = document.getElementsByTagName('label');
+   for (var i = 0; i < labels.length; i++ ) {
+    if (labels[i].htmlFor == input.id) {
+     var s = stateSelector.value.split("-")[0]
+     labels[i].textContent = "Try " + PLSSSources[s].hint;
+    }
+   }
+  });
  }
 
  this.attachSearchField = function(id) {
