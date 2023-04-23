@@ -204,17 +204,30 @@ function PLSSCAAB() {
    }
   }
   // Form request
-  var url = "https://www.agr.gc.ca/atlas/rest/services/mapservices/aafc_canada_land_parcels/MapServer/14/query?where=QTR+LIKE+'" +
-            qtr +
-            "'+AND+SEC+=+" +
-            sec +
-            "+AND+TWP+=+" +
-            twp +
-            "+AND+RGE+=+" +
-            rge +
-            "+AND+MER+=+" +
-            mer +
-            "&layers=2&geometryType=esriGeometryEnvelope&f=json&outFields=QTR_DESCRIPTION"
+  var url;
+  if (mer != "_") {
+   url = "https://www.agr.gc.ca/atlas/rest/services/mapservices/aafc_canada_land_parcels/MapServer/14/query?where=QTR+LIKE+'" +
+         qtr +
+         "'+AND+SEC+=+" +
+         sec +
+         "+AND+TWP+=+" +
+         twp +
+         "+AND+RGE+=+" +
+         rge +
+         "+AND+MER+=+" +
+         mer +
+         "&layers=2&geometryType=esriGeometryEnvelope&f=json&outFields=QTR_DESCRIPTION"
+  } else {
+   url = "https://www.agr.gc.ca/atlas/rest/services/mapservices/aafc_canada_land_parcels/MapServer/14/query?where=QTR+LIKE+'" +
+         qtr +
+         "'+AND+SEC+=+" +
+         sec +
+         "+AND+TWP+=+" +
+         twp +
+         "+AND+RGE+=+" +
+         rge +
+         "&layers=2&geometryType=esriGeometryEnvelope&f=json&outFields=QTR_DESCRIPTION"
+  }
   // Show loading indicator.
   document.getElementById('searchresults').textContent = "Loading...";
   // make request

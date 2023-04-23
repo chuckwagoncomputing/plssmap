@@ -7,7 +7,7 @@ var PLSSSources = {
  },
  'caab': {
   name: 'PLSSCAAB',
-  hint: "se 1 2 3 4",
+  hint: "se 1 2 3 4 or se 1 2 3",
   extent: [-13375499.6709, 6274328.2866,
            -12245674.3175, 8399780.76]
  },
