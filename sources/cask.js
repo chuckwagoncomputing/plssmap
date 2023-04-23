@@ -87,7 +87,7 @@ function PLSSCASK() {
    var v = [(Math.floor(extent[0] / 10000) * 10000), (Math.floor(extent[1] / 10000) * 10000), 0, 0];
    v[2] = v[0] + 10000;
    v[3] = v[1] + 10000;
-   for (var i = 0; i < 10; i++) {
+   for (var i = 0; i < 40; i++) {
     // Check for overlap between the layer extent and view extent.
     if (checkOverlap(e, v)) {
      // Form URL to request.
