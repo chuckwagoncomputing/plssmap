@@ -84,9 +84,9 @@ function PLSSCAAB() {
  var source = new ol.source.Vector({
   loader: function(extent, resolution, projection) {
    var e = PLSSSources[id].extent;
-   var v = [(Math.floor(extent[0] / 48000) * 48000), (Math.floor(extent[1] / 48000) * 48000), 0, 0];
-   v[2] = v[0] + 48000;
-   v[3] = v[1] + 48000;
+   var v = [(Math.floor(extent[0] / 10000) * 10000), (Math.floor(extent[1] / 10000) * 10000), 0, 0];
+   v[2] = v[0] + 10000;
+   v[3] = v[1] + 10000;
    for (var i = 0; i < 10; i++) {
     // Check for overlap between the layer extent and view extent.
     if (checkOverlap(e, v)) {
@@ -157,12 +157,12 @@ function PLSSCAAB() {
      }
     }
     v[0] = v[2];
-    v[2] = v[2] + 48000;
+    v[2] = v[2] + 10000;
     if (v[0] > extent[2]) {
-     v[0] = (Math.floor(extent[0] / 48000) * 48000);
+     v[0] = (Math.floor(extent[0] / 10000) * 10000);
      v[1] = v[3];
-     v[2] = v[0] + 48000;
-     v[3] = v[3] + 48000;
+     v[2] = v[0] + 10000;
+     v[3] = v[3] + 10000;
      if (v[1] > extent[3]) {
       break;
      }
