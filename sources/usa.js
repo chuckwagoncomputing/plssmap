@@ -9,8 +9,7 @@ function PLSSUSA() {
   //  our text will run together, so let's return nothing.
   if (resolution > 19) {
    t = '';
-  }
-  else {
+  } else {
    var divid = feature.get('FRSTDIVID');
    t = divid.substring(5, 7) + divid.substring(8, 9) + " " + divid.substring(10, 12) + divid.substring(13, 14) + " " + divid.substring(17, 19);
   }
@@ -29,7 +28,6 @@ function PLSSUSA() {
     if (!checkOverlap(PLSSSources[id].extent, v)) {
      return;
     }
-    // Check for overlap between the layer extent and view extent.
     // Form URL to request.
     var url = 'https://gis.blm.gov/arcgis/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/2/query?f=json&' +
               'returnGeometry=true&spatialRel=esriSpatialRelIntersects&geometry=' +
@@ -40,7 +38,7 @@ function PLSSUSA() {
                                  ',"spatialReference":{"wkid":102100}}') +
               '&geometryType=esriGeometryEnvelope&inSR=102100&outFields=*' +
               '&outSR=102100'
-    fetchSource(url, JSON.stringify(v), storage, source, projection);
+    fetchSource(url, id + JSON.stringify(v), storage, source, projection);
    });
   },
   strategy: ol.loadingstrategy.tile(ol.tilegrid.createXYZ({
