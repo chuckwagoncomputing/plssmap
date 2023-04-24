@@ -84,59 +84,37 @@ function PLSSUSA() {
 
  var source = new ol.source.Vector({
   loader: function(extent, resolution, projection) {
-   var e = PLSSSources[id].extent;
-   var v = [(Math.floor(extent[0] / 48000) * 48000), (Math.floor(extent[1] / 48000) * 48000), 0, 0];
-   v[2] = v[0] + 48000;
-   v[3] = v[1] + 48000;
-   for (var i = 0; i < 10; i++) {
+   breakExtent(extent, 48000).forEach(function(v) {
+    if (!checkOverlap(PLSSSources[id].extent, v)) {
+     return;
+    }
     // Check for overlap between the layer extent and view extent.
-    if (checkOverlap(e, v)) {
-     // Form URL to request.
-     var url = 'https://gis.blm.gov/arcgis/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/2/query?f=json&' +
-               'returnGeometry=true&spatialRel=esriSpatialRelIntersects&geometry=' +
-               encodeURIComponent('{"xmin":' + v[0] +
-                                  ',"ymin":' + v[1] +
-                                  ',"xmax":' + v[2] +
-                                  ',"ymax":' + v[3] +
-                                  ',"spatialReference":{"wkid":102100}}') +
-               '&geometryType=esriGeometryEnvelope&inSR=102100&outFields=*' +
-               '&outSR=102100'
-     // Try getting the data from storage
-     var n = JSON.stringify(v)
-     if (!(sourceLocks.indexOf(n) >= 0)) {
-      sourceLocks.push(n);
-      storage.fetch(n, function(n, url, e, r) {
-       // If successful, use it to build features
-       if (e == 0) {
-        buildFeatures(r.data, projection);
-        dt = new Date()
-        if (dt.setMonth(dt.getMonth() - 1) > new Date(r.dt)) {
-         storageSatellite.del(n, function(e) {
-          if (e != 0) {
-           console.log("error deleting")
-          }
-         });
-         doLater(2, function(done) {
-          $.ajax({url: url, dataType: 'jsonp', success: function(response) {
-           if (response.error) {
-            // Remove the lock
-            sourceLocks.splice(sourceLocks.indexOf(n), 1);
-            console.log(response.error.message + '\n' +
-                        response.error.details.join('\n'));
-           }
-           else {
-            // Store response so we have it next time.
-            storage.store(n, response, function() {});
-           }
-           done()
-          }})
-         });
-        }
-       }
-       // If not, we'll have to fetch it.
-       else {
-        // Make request
-        doLater(1, function(done) {
+    // Form URL to request.
+    var url = 'https://gis.blm.gov/arcgis/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/2/query?f=json&' +
+              'returnGeometry=true&spatialRel=esriSpatialRelIntersects&geometry=' +
+              encodeURIComponent('{"xmin":' + v[0] +
+                                 ',"ymin":' + v[1] +
+                                 ',"xmax":' + v[2] +
+                                 ',"ymax":' + v[3] +
+                                 ',"spatialReference":{"wkid":102100}}') +
+              '&geometryType=esriGeometryEnvelope&inSR=102100&outFields=*' +
+              '&outSR=102100'
+    // Try getting the data from storage
+    var n = JSON.stringify(v)
+    if (!(sourceLocks.indexOf(n) >= 0)) {
+     sourceLocks.push(n);
+     storage.fetch(n, function(n, url, e, r) {
+      // If successful, use it to build features
+      if (e == 0) {
+       buildFeatures(r.data, projection);
+       dt = new Date()
+       if (dt.setMonth(dt.getMonth() - 1) > new Date(r.dt)) {
+        storageSatellite.del(n, function(e) {
+         if (e != 0) {
+          console.log("error deleting")
+         }
+        });
+        doLater(2, function(done) {
          $.ajax({url: url, dataType: 'jsonp', success: function(response) {
           if (response.error) {
            // Remove the lock
@@ -145,8 +123,6 @@ function PLSSUSA() {
                        response.error.details.join('\n'));
           }
           else {
-           // Build features using response
-           buildFeatures(response, projection);
            // Store response so we have it next time.
            storage.store(n, response, function() {});
           }
@@ -154,21 +130,31 @@ function PLSSUSA() {
          }})
         });
        }
-      }.bind(this, n, url));
-     }
+      }
+      // If not, we'll have to fetch it.
+      else {
+       // Make request
+       doLater(1, function(done) {
+        $.ajax({url: url, dataType: 'jsonp', success: function(response) {
+         if (response.error) {
+          // Remove the lock
+          sourceLocks.splice(sourceLocks.indexOf(n), 1);
+          console.log(response.error.message + '\n' +
+                      response.error.details.join('\n'));
+         }
+         else {
+          // Build features using response
+          buildFeatures(response, projection);
+          // Store response so we have it next time.
+          storage.store(n, response, function() {});
+         }
+         done()
+        }})
+       });
+      }
+     }.bind(this, n, url));
     }
-    v[0] = v[2];
-    v[2] = v[2] + 48000;
-    if (v[0] > extent[2]) {
-     v[0] = (Math.floor(extent[0] / 48000) * 48000);
-     v[1] = v[3];
-     v[2] = v[0] + 48000;
-     v[3] = v[3] + 48000;
-     if (v[1] > extent[3]) {
-      break;
-     }
-    }
-   }
+   });
   },
   strategy: ol.loadingstrategy.tile(ol.tilegrid.createXYZ({
    tileSize: 512

@@ -8,3 +8,25 @@ proj4.defs("WKID:102039", "+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-9
 function checkOverlap(e, v) {
  return ((e[0] < v[2] && (e[2] > v[0])) && (e[3] > v[1]) && (e[1] < v[3]))
 }
+
+function breakExtent(e, b) {
+ var va = [];
+ var v = [(Math.floor(e[0] / b) * b), (Math.floor(e[1] / b) * b), 0, 0];
+ v[2] = v[0] + b;
+ v[3] = v[1] + b;
+ for (var i = 0; i < 40; i++) {
+  va[i] = v.slice();
+  v[0] = v[2];
+  v[2] = v[2] + b;
+  if (v[0] > e[2]) {
+   v[0] = (Math.floor(e[0] / b) * b);
+   v[1] = v[3];
+   v[2] = v[0] + b;
+   v[3] = v[3] + b;
+   if (v[1] > e[3]) {
+    return va;
+   }
+  }
+ }
+ return va;
+}
