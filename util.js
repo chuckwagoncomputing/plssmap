@@ -148,3 +148,44 @@ function getStyleBoilerplate(text) {
   })
  });
 }
+
+function performSearch(url, newResult, notFound, clearResults, getText) {
+ // Show loading indicator.
+ document.getElementById('searchresults').textContent = "Loading...";
+ // make request
+ $.ajax({
+  url: url,
+  dataType: 'jsonp',
+  // Success?
+  success: function(response) {
+   clearResults();
+   // If the response has an error value
+   if (response["error"]) {
+    notFound();
+   }
+   // If there was no error, but no results
+   else if (!response.features.length > 0) {
+    notFound();
+   }
+   else {
+    // Loop through the results
+    for (var i in response.features) {
+     var result = {};
+     result.name = getText(response.features[i]);
+     // Get geometry of result
+     var e = esrijsonFormat.readGeometry(response.features[i].geometry, {
+      dataProjection: ol.proj.get("EPSG:3857"),
+      featureProjection: "EPSG:3857"
+     }).getExtent();
+     // Find center by averaging max and min x,y coordinates
+     result.x = (e[0]+e[2])/2;
+     result.y = (e[1]+e[3])/2;
+     newResult(result);
+    }
+   }
+  },
+  error: function(e) {
+   notFound();
+  }
+ });
+}
