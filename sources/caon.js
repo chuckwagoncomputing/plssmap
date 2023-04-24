@@ -37,7 +37,7 @@ function PLSSCAON() {
                                  ',"spatialReference":{"wkid":102100}}') +
               '&geometryType=esriGeometryEnvelope&inSR=102100&outFields=*' +
               '&outSR=102100'
-    fetchSource(url, id + JSON.stringify(v), storage, source, projection);
+    fetchSource(url, id, JSON.stringify(v), storage, source, projection);
    });
   },
   strategy: ol.loadingstrategy.tile(ol.tilegrid.createXYZ({

@@ -576,7 +576,7 @@ var layerMarkers = new ol.layer.Vector({
  zIndex: 1
 });
 
-var PLSSLock = 0;
+var PLSSLock = [];
 
 function findPLSS() {
  var e = map.getView().calculateExtent(map.getSize());
@@ -591,12 +591,12 @@ function findPLSS() {
      break;
     }
    }
-   if (!found && PLSSLock == 0) {
-    PLSSLock = 1;
+   if (!found && PLSSLock.indexOf(id) == -1) {
+    PLSSLock.push(id);
     getPLSSSource(id, function(ret) {
      if (typeof ret == "object") {
       map.addLayer(ret.layer);
-      PLSSLock = 0;
+      PLSSLock.splice(PLSSLock.indexOf(id), 1);
      }
     });
    }

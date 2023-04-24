@@ -63,17 +63,17 @@ function buildFeatures(data, projection, source) {
  }
 }
 
-function fetchSource(url, id, storage, source, projection) {
+function fetchSource(url, id, key, storage, source, projection) {
  // Try getting the data from storage
- if (!(sourceLocks.indexOf(id) >= 0)) {
-  sourceLocks.push(id);
-  storage.fetch(id, function(id, url, e, r) {
+ if (!(sourceLocks.indexOf(id + key) >= 0)) {
+  sourceLocks.push(id + key);
+  storage.fetch(key, function(key, url, e, r) {
    // If successful, use it to build features
    if (e == 0) {
     buildFeatures(r.data, projection, source);
     dt = new Date()
     if (dt.setMonth(dt.getMonth() - 1) > new Date(r.dt)) {
-     storageSatellite.del(id, function(e) {
+     storageSatellite.del(key, function(e) {
       if (e != 0) {
        console.log("error deleting")
       }
@@ -82,13 +82,13 @@ function fetchSource(url, id, storage, source, projection) {
       $.ajax({url: url, dataType: 'jsonp', success: function(response) {
        if (response.error) {
         // Remove the lock
-        sourceLocks.splice(sourceLocks.indexOf(id), 1);
+        sourceLocks.splice(sourceLocks.indexOf(id + key), 1);
         console.log(response.error.message + '\n' +
                     response.error.details.join('\n'));
        }
        else {
         // Store response so we have it next time.
-        storage.store(id, response, function() {});
+        storage.store(key, response, function() {});
        }
        done()
       }})
@@ -102,7 +102,7 @@ function fetchSource(url, id, storage, source, projection) {
      $.ajax({url: url, dataType: 'jsonp', success: function(response) {
       if (response.error) {
        // Remove the lock
-       sourceLocks.splice(sourceLocks.indexOf(id), 1);
+       sourceLocks.splice(sourceLocks.indexOf(id + key), 1);
        console.log(response.error.message + '\n' +
                    response.error.details.join('\n'));
       }
@@ -110,13 +110,13 @@ function fetchSource(url, id, storage, source, projection) {
        // Build features using response
        buildFeatures(response, projection, source);
        // Store response so we have it next time.
-       storage.store(id, response, function() {});
+       storage.store(key, response, function() {});
       }
       done()
      }})
     });
    }
-  }.bind(this, id, url));
+  }.bind(this, key, url));
  }
 }
 
