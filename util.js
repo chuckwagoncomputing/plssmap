@@ -30,3 +30,121 @@ function breakExtent(e, b) {
  }
  return va;
 }
+
+var sourceLocks = [];
+
+// Given a EsriJSON format string, creates features.
+function buildFeatures(data, projection, source) {
+ // Parse features
+ var features = esrijsonFormat.readFeatures(data, {
+  featureProjection: projection
+ });
+ // Loop through the features
+ for (var i = 0; i < features.length; i++) {
+  // Get their extent
+  var extent = features[i].getGeometry().getExtent();
+  var matched = false;
+  // Get features that overlap this one
+  source.forEachFeatureInExtent(extent, function(f) {
+   var fext = f.getGeometry().getExtent();
+   matched = true;
+   // Loop through coordinates, checking if they're different.
+   for (var a = 0; a < 4; a++) {
+    if (extent[a] != fext[a]) {
+     matched = false;
+    }
+   }
+  });
+  // If we didn't find a match,
+  if (!matched) {
+   // Go ahead and add the feature.
+   source.addFeature(features[i]);
+  }
+ }
+}
+
+function fetchSource(url, id, storage, source, projection) {
+ // Try getting the data from storage
+ if (!(sourceLocks.indexOf(id) >= 0)) {
+  sourceLocks.push(id);
+  storage.fetch(id, function(id, url, e, r) {
+   // If successful, use it to build features
+   if (e == 0) {
+    buildFeatures(r.data, projection, source);
+    dt = new Date()
+    if (dt.setMonth(dt.getMonth() - 1) > new Date(r.dt)) {
+     storageSatellite.del(id, function(e) {
+      if (e != 0) {
+       console.log("error deleting")
+      }
+     });
+     doLater(2, function(done) {
+      $.ajax({url: url, dataType: 'jsonp', success: function(response) {
+       if (response.error) {
+        // Remove the lock
+        sourceLocks.splice(sourceLocks.indexOf(id), 1);
+        console.log(response.error.message + '\n' +
+                    response.error.details.join('\n'));
+       }
+       else {
+        // Store response so we have it next time.
+        storage.store(id, response, function() {});
+       }
+       done()
+      }})
+     });
+    }
+   }
+   // If not, we'll have to fetch it.
+   else {
+    // Make request
+    doLater(1, function(done) {
+     $.ajax({url: url, dataType: 'jsonp', success: function(response) {
+      if (response.error) {
+       // Remove the lock
+       sourceLocks.splice(sourceLocks.indexOf(id), 1);
+       console.log(response.error.message + '\n' +
+                   response.error.details.join('\n'));
+      }
+      else {
+       // Build features using response
+       buildFeatures(response, projection, source);
+       // Store response so we have it next time.
+       storage.store(id, response, function() {});
+      }
+      done()
+     }})
+    });
+   }
+  }.bind(this, id, url));
+ }
+}
+
+// Style for the features and their text.
+function getStyleBoilerplate(text) {
+ return new ol.style.Style({
+  fill: new ol.style.Fill({
+   color: 'rgba(0, 0, 0, 0)'
+  }),
+  stroke: new ol.style.Stroke({
+   color: '#0000ff',
+   width: 2
+  }),
+  text: new ol.style.Text({
+   textAlign: 'center',
+   textBaseline: 'middle',
+   font: 'normal 1em Verdana',
+   text: text,
+   fill: new ol.style.Fill({
+    color: '#0000ff'
+   }),
+   stroke: new ol.style.Stroke({
+    color: '#ffffff',
+    width: 3
+   }),
+   offsetX: 0,
+   offsetY: 0,
+   rotation: 0
+  })
+ });
+}
