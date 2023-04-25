@@ -234,12 +234,10 @@ function ControllerCenter() {
  //  Takes a bool. True in 'keep centered' mode
  function styleCenterButton(t) {
   if (t) {
-   centerButton.style.background = '#0000ff';
-   centerButton.style.color = '#ffffff';
+   centerButton.classList.add('active');
   }
   else {
-   centerButton.style.background = '#ffffff';
-   centerButton.style.color = '#000000';
+   centerButton.classList.remove('active');
   }
  }
 
