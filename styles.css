@@ -268,11 +268,6 @@ body.has-active-menu {
  margin-right: 5px;
 }
 
-#controlSearchButton span {
- margin-bottom: 3px;
- margin-left: 2px;
-}
-
 #searchresults {
  width: 100%;
  overflow: scroll;
