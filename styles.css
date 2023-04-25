@@ -282,6 +282,8 @@ body.has-active-menu {
 }
 
 .search-result-button:first-child {
+ border-left: none;
+ border-right: none;
  border-top: 2px solid #0000ff;
 }
 
@@ -316,6 +318,7 @@ body.has-active-menu {
  font-size: 10px;
  line-height: 10px;
  text-align: center;
+ padding: 3px;
 }
 
 #labelInputContainer {
@@ -365,49 +368,45 @@ body.has-active-menu {
 
 @media (prefers-color-scheme: dark) {
  .ol-zoom .ol-zoom-in, .ol-zoom .ol-zoom-out {
-  background: #000;
+  background: #222;
   color: #fff;
  }
 
  .ol-control .ol-rotate-reset {
-  background: #000;
+  background: #222;
   color: #fff;
  }
 
  #controlMarker {
-  background: #000;
+  background: #222;
   color: #fff;
  }
 
- .no-touch #controlMarker:hover {
-  background: rgba(0, 60, 136, 0.7) !important;
-  color: #000 !important;
- }
-
  #controlCenter {
-  background: #000;
+  background: #222;
   color: #fff;
  }
 
  #controlMenu {
+  background: #222;
+  color: #fff;
+ }
+
+ html, .menu, .fineprint {
   background: #000;
   color: #fff;
  }
 
- html, .menu, .fineprint, select, button {
-  background: #000;
-  color: #fff;
- }
-
- button {
+ select, button {
+  background: #222;
   color: #fff !important;
  }
 
  input.mdl-textfield__input {
-  border-bottom: 1px solid #919191;
+  border-bottom: 1px solid #888;
  }
 
  label.mdl-textfield__label {
-  color: #919191 !important;
+  color: #888 !important;
  }
 }
