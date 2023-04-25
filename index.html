@@ -26,13 +26,13 @@
   </template>
   <div class="push-content" id="push-content">
    <div id="map" class="map"></div>
-   <button id="controlMarker">
+   <button id="controlMarker" class="plss-control">
     <span class="fa fa-map-marker fa-2x"></span>
    </button>
-   <button id="controlCenter">
+   <button id="controlCenter" class="plss-control">
     <span class="fa fa-location-arrow fa-2x"></span>
    </button>
-   <button id="controlMenu">
+   <button id="controlMenu" class="plss-control">
     <span class="fa fa-bars fa-2x"></span>
    </button>
    <div id="mask" class="mask"></div>
@@ -44,13 +44,13 @@
    </div>
    <br/>
    <div id="buttonContainer">
-    <button id="buttonCancelMarker" class="mdl-button mdl-js-button mdl-button--raised">Delete</button>
-    <button id="buttonSaveMarker" class="mdl-button mdl-js-button mdl-button--raised">Save</button>
+    <button id="buttonCancelMarker" class="plss-control">Delete</button>
+    <button id="buttonSaveMarker" class="plss-control">Save</button>
    </div>
   </nav>
   <nav id="menu" class="menu menu-push-right">
    <div class="tabView" id="searchView">
-    <select id="searchstate">
+    <select id="searchstate" class="plss-control">
      <option disabled>USA</option>
      <option value="usa-al">AL</option>
      <option value="usa-az">AZ</option>
@@ -91,7 +91,7 @@
       <input class="mdl-textfield__input" type="text" id="controlSearchInput">
       <label class="mdl-textfield__label" for="controlSearchInput">Search</label>
      </div>
-     <button id="controlSearchButton" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+     <button id="controlSearchButton" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab plss-control">
       <span class="fa fa-search fa-2x"></span>
      </button>
     </div>
@@ -114,7 +114,7 @@
       <a onclick="cordova.InAppBrowser.open('https://chuckwagoncomputing.com/plss-privacy.html', '_system')" href="https://chuckwagoncomputing.com/plss-privacy.html">Privacy Policy</a>
      </div>
      <div class="tabs">
-      <button class="tabButton" id="searchTabButton">Search</button><button class="tabButton" id="markerTabButton">Markers</button>
+      <button class="tabButton plss-control" id="searchTabButton">Search</button><button class="tabButton plss-control" id="markerTabButton">Markers</button>
      </div>
     </div>
    </div>

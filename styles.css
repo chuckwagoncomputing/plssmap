@@ -10,6 +10,14 @@ html, body, .push-content, .map {
  height: 100%;
 }
 
+.plss-control {
+ border: 2px solid #0000ff;
+ height: 50px;
+ border-radius: 50px;
+ background: #fff;
+ color: #000;
+}
+
 .ol-control {
  background: rgba(0, 0, 0, 0);
 }
@@ -99,11 +107,6 @@ html, body, .push-content, .map {
  position: absolute;
  z-index: 1;
  width: 50px;
- height: 50px;
- background: #fff;
- color: #000;
- border-radius: 50%;
- border: 2px solid #0000ff;
  margin: 10px;
  left: 0;
  top: 120px;
@@ -118,11 +121,6 @@ html, body, .push-content, .map {
  position: absolute;
  z-index: 1;
  width: 50px;
- height: 50px;
- background: #fff;
- color: #000;
- border-radius: 50%;
- border: 2px solid #0000ff;
  margin: 10px;
  right: 0;
  bottom: 0;
@@ -142,11 +140,6 @@ html, body, .push-content, .map {
  position: absolute;
  z-index: 1;
  width: 50px;
- height: 50px;
- background: #fff;
- color: #000;
- border-radius: 50%;
- border: 2px solid #0000ff;
  margin: 10px;
  right: 0;
  top: 0;
@@ -169,6 +162,9 @@ body.has-active-menu {
  display: flex;
  flex-direction: column;
  max-height: 100vh;
+ border-left: 2px solid #0000ff;
+ box-sizing: border-box;
+ padding: 5px;
 }
 
 .menu-push-right {
@@ -266,7 +262,11 @@ body.has-active-menu {
  font-size: 10px;
  margin-left: 5px;
  margin-right: 5px;
- border: 2px solid #0000ff;
+}
+
+#controlSearchButton span {
+ margin-bottom: 3px;
+ margin-left: 2px;
 }
 
 #searchresults {
@@ -345,17 +345,19 @@ body.has-active-menu {
  width: calc(50% - 2px);
  margin: 1px;
  display: inline;
- border: 2px solid #0000ff;
- height: 50px;
 }
 
 .tabButton:first-of-type {
  border-top-left-radius: 50px;
+ border-top-right-radius: unset;
  border-bottom-left-radius: 50px;
+ border-bottom-right-radius: unset;
 }
 
 .tabButton:last-of-type {
+ border-top-left-radius: unset;
  border-top-right-radius: 50px;
+ border-bottom-left-radius: unset;
  border-bottom-right-radius: 50px;
 }
 
@@ -377,29 +379,14 @@ body.has-active-menu {
   color: #fff;
  }
 
- #controlMarker {
+.plss-control, button {
   background: #222;
-  color: #fff;
- }
-
- #controlCenter {
-  background: #222;
-  color: #fff;
- }
-
- #controlMenu {
-  background: #222;
-  color: #fff;
+  color: #fff !important;
  }
 
  html, .menu, .fineprint {
   background: #000;
   color: #fff;
- }
-
- select, button {
-  background: #222;
-  color: #fff !important;
  }
 
  input.mdl-textfield__input {
