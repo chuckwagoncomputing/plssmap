@@ -42,19 +42,15 @@ function buildFeatures(data, projection, source) {
  // Loop through the features
  for (var i = 0; i < features.length; i++) {
   // Get their extent
-  var extent = features[i].getGeometry().getExtent();
+  var fa = features[i];
+  var extent = fa.getGeometry().getExtent();
   var matched = false;
   // Get features that overlap this one
-  source.forEachFeatureInExtent(extent, function(f) {
-   var fext = f.getGeometry().getExtent();
-   matched = true;
-   // Loop through coordinates, checking if they're different.
-   for (var a = 0; a < 4; a++) {
-    if (extent[a] != fext[a]) {
-     matched = false;
-    }
+  source.forEachFeatureInExtent(extent, function(fb) {
+   if (Object.values(fa.getProperties()).join("") === Object.values(fb.getProperties()).join("")) {
+    matched = true;
    }
-  });
+  }.bind(this));
   // If we didn't find a match,
   if (!matched) {
    // Go ahead and add the feature.
