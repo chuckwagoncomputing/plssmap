@@ -330,8 +330,20 @@ function ControllerMenu() {
 
  this.populateMarkerList = function() {
   clearMarkerList();
-  for (var i = 0; i < sourceMarkers.getFeatures().length; i++) {
-   marker = sourceMarkers.getFeatures()[i]
+  var markers = sourceMarkers.getFeatures();
+  markers.sort(function(a, b) {
+   var ta = a.getStyle().getText().getText().toLowerCase();
+   var tb = b.getStyle().getText().getText().toLowerCase();
+   if ( ta > tb ) {
+    return 1;
+   } else if ( ta < tb ) {
+    return -1;
+   } else {
+    return 0;
+   }
+  });
+  for (var i = 0; i < markers.length; i++) {
+   var marker = markers[i]
    if (marker.getStyle().getText()) {
     // Get the result template
     var template = document.getElementById("searchResult");
