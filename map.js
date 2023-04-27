@@ -53,7 +53,7 @@ function ControllerMarker() {
  var markerButton
  var cancelButton
  var saveButton
- var currentMarker
+ var currentFeature
 
  this.saveMarkers = function() {
   var markers = []
@@ -109,6 +109,7 @@ function ControllerMarker() {
     return;
    }
    input.value = ""
+   input.parentNode.classList.remove('is-dirty');
    var center = map.getView().getCenter()
    currentFeature = new ol.Feature({
     geometry: new ol.geom.Point(center),
@@ -171,11 +172,12 @@ function ControllerMarker() {
  this.edit = function(ft) {
   currentFeature = ft
   var coordinates = currentFeature.getGeometry().getCoordinates();
-  if (currentFeature.getStyle().getText()) {
+  if (currentFeature.getStyle().getText() && currentFeature.getStyle().getText().getText().length > 0) {
    input.value = currentFeature.getStyle().getText().getText()
-  }
-  else {
+   input.parentNode.classList.add('is-dirty');
+  } else {
    input.value = ""
+   input.parentNode.classList.remove('is-dirty');
   }
   controllerMarker.open()
  }
