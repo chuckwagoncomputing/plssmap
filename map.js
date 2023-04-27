@@ -814,6 +814,7 @@ function buildMap() {
   }
   else {
    controllerMarker.close()
+   controllerMarker.saveMarkers()
   }
  });
 }
