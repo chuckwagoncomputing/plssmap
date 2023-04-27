@@ -108,6 +108,7 @@ function ControllerMarker() {
     controllerMarker.close()
     return;
    }
+   controllerMarker.open()
    input.value = ""
    input.parentNode.classList.remove('is-dirty');
    var center = map.getView().getCenter()
@@ -124,7 +125,6 @@ function ControllerMarker() {
    });
    currentFeature.setStyle(iconStyle);
    sourceMarkers.addFeature(currentFeature)
-   controllerMarker.open()
   });
  }
 
@@ -171,6 +171,7 @@ function ControllerMarker() {
 
  this.edit = function(ft) {
   currentFeature = ft
+  controllerMarker.open()
   var coordinates = currentFeature.getGeometry().getCoordinates();
   if (currentFeature.getStyle().getText() && currentFeature.getStyle().getText().getText().length > 0) {
    input.value = currentFeature.getStyle().getText().getText()
@@ -179,7 +180,6 @@ function ControllerMarker() {
    input.value = ""
    input.parentNode.classList.remove('is-dirty');
   }
-  controllerMarker.open()
  }
 
  this.setup = function() {
