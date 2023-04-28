@@ -235,6 +235,9 @@ function ControllerCenter() {
  // A function to change the style of the button.
  //  Takes a bool. True in 'keep centered' mode
  function styleCenterButton(t) {
+  if (typeof(centerButton) == "undefined") {
+   return;
+  }
   if (t) {
    centerButton.classList.add('active');
   }
@@ -258,6 +261,7 @@ function ControllerCenter() {
  // Attach the center button so we can listen for clicks and style it
  this.attachCenterButton = function(id) {
   centerButton = document.getElementById(id);
+  styleCenterButton(centerOnPosition);
   centerButton.addEventListener('click', function() {
    centerOnPosition = !centerOnPosition;
    styleCenterButton(centerOnPosition);
@@ -652,7 +656,8 @@ function setupGeolocation() {
   updateView();
  });
 
- startGeolocation()
+ controllerCenter.center(true);
+ startGeolocation();
 }
 
 function startGeolocation() {
