@@ -131,9 +131,31 @@ html, body, .push-content, .map {
  color: #fff;
 }
 
+#controlCenter.loading {
+ background: conic-gradient(from 45deg, #0000ff55, #0000ff);
+ animation: scan 4s infinite linear;
+ color: #fff;
+}
+
+@keyframes scan {
+ to {
+  transform: rotate(1turn);
+ }
+}
+
 .no-touch #controlCenter:hover {
- background: rgba(0, 60, 136, 0.7) !important;
- color: #fff !important;
+ background: rgba(0, 60, 136, 0.7);
+ color: #fff;
+}
+
+.no-touch #controlCenter.active:hover {
+ background: rgba(0, 0, 255, 0.7);
+ color: #fff;
+}
+
+.no-touch #controlCenter.loading:hover {
+ background: conic-gradient(from 45deg, #0000ff25, #0000ffa0);
+ color: #fff;
 }
 
 #controlMenu {

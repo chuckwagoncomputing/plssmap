@@ -228,7 +228,7 @@ var controllerMarker = new ControllerMarker();
 function ControllerCenter() {
 // Private:
  // Whether to keep centered
- var centerOnPosition = true;
+ var centerOnPosition = 1;
  // The button
  var centerButton;
 
@@ -238,11 +238,15 @@ function ControllerCenter() {
   if (typeof(centerButton) == "undefined") {
    return;
   }
-  if (t) {
+  if (t == 2) {
+   centerButton.classList.remove('loading');
    centerButton.classList.add('active');
-  }
-  else {
+  } else if (t == 1) {
    centerButton.classList.remove('active');
+   centerButton.classList.add('loading');
+  } else {
+   centerButton.classList.remove('active');
+   centerButton.classList.remove('loading');
   }
  }
 
@@ -255,7 +259,7 @@ function ControllerCenter() {
 
  // Get whether 'keep centered' mode is on
  this.shouldCenter = function() {
-  return centerOnPosition;
+  return centerOnPosition > 0;
  }
 
  // Attach the center button so we can listen for clicks and style it
@@ -263,10 +267,13 @@ function ControllerCenter() {
   centerButton = document.getElementById(id);
   styleCenterButton(centerOnPosition);
   centerButton.addEventListener('click', function() {
-   centerOnPosition = !centerOnPosition;
-   styleCenterButton(centerOnPosition);
-   startGeolocation();
-  });
+   if (centerOnPosition == 0) {
+    this.center(1);
+    startGeolocation();
+   } else {
+    this.center(0);
+   }
+  }.bind(this));
  }
 };
 
@@ -363,7 +370,7 @@ function ControllerMenu() {
     // Add an event listener
     clone.querySelector(".search-result-button").addEventListener('click', function(e) {
      // Disable centering
-     controllerCenter.center(false);
+     controllerCenter.center(0);
      // Set center at the result
      view.setCenter([+e.target.dataset.x, +e.target.dataset.y]);
      view.setZoom(15)
@@ -418,7 +425,7 @@ function ControllerSearch() {
   // Add an event listener
   clone.querySelector(".search-result-button").addEventListener('click', function(e) {
    // Disable centering
-   controllerCenter.center(false);
+   controllerCenter.center(0);
    // Set center at the result
    view.setCenter([+e.target.dataset.x, +e.target.dataset.y]);
    view.setZoom(15)
@@ -625,7 +632,7 @@ function updateView() {
   var position = geolocation.getPosition();
   if ( typeof position == "undefined" ) {
    console.log("position undefined");
-   controllerCenter.center(false)
+   controllerCenter.center(0)
   }
   else {
    view.setCenter(geolocation.getPosition());
@@ -638,7 +645,7 @@ function setupGeolocation() {
   projection: view.getProjection(),
   trackingOptions: {
    enableHighAccuracy: true,
-   timeout: 6000,
+   timeout: 10000,
    maxAge: 60000
   }
  });
@@ -654,9 +661,10 @@ function setupGeolocation() {
   featurePosition.setGeometry(coordinates ?
     new ol.geom.Point(coordinates) : null);
   updateView();
+  controllerCenter.center(2);
  });
 
- controllerCenter.center(true);
+ controllerCenter.center(1);
  startGeolocation();
 }
 
@@ -664,12 +672,9 @@ function startGeolocation() {
  geolocation.setTracking(true);
  setTimeout(function() {
   if (!geolocation.getTracking()) {
-   controllerCenter.center(false)
+   controllerCenter.center(0)
   }
-  else {
-   updateView()
-  }
- }, 6200)
+ }, 10200)
 }
 
 var Drag = (function (PointerInteraction) {
@@ -799,7 +804,7 @@ function buildMap() {
  // We need to disable geolocation if the user drags the map.
  map.on('pointermove', function(e) {
   if (e.dragging) {
-   controllerCenter.center(false);
+   controllerCenter.center(0);
   }
  });
 
