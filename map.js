@@ -645,7 +645,7 @@ function setupGeolocation() {
   projection: view.getProjection(),
   trackingOptions: {
    enableHighAccuracy: true,
-   timeout: 10000,
+   timeout: 15000,
    maximumAge: 60000
   }
  });
@@ -676,7 +676,7 @@ function startGeolocation() {
   if (!geolocation.getTracking()) {
    controllerCenter.center(0)
   }
- }, 10200)
+ }, 15200)
 }
 
 var Drag = (function (PointerInteraction) {
