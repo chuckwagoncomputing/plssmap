@@ -488,16 +488,17 @@ function ControllerSearch() {
  }
 }
 
-function sourceSatellite(options) {
- // We inherit from the Bing Maps source
- ol.source.BingMaps.call(this, options);
- var sourceBing = new ol.source.BingMaps(options);
+class SourceSatellite extends ol.source.BingMaps {
+ constructor(options) {
+  super(options)
+ }
+
  // This is the function called to load the tile
- this.tileLoadFunction = function(imageTile, src) {
-  // Get the <img> element from the tile object
-  var imgElement = imageTile.getImage();
-  // Try getting it from the database
-  storageSatellite.fetch(src, function(e, r) {
+ tileLoadFunction(imageTile, src) {
+   // Get the <img> element from the tile object
+   var imgElement = imageTile.getImage();
+   // Try getting it from the database
+   storageSatellite.fetch(src, function(e, r) {
    // If successful, use it
    if (e == 0) {
     imgElement.src = r.data;
@@ -551,15 +552,12 @@ function sourceSatellite(options) {
      // Call Bing Maps' tileLoadFunction.
      // It will populate the src field for the image element,
      //  and when the image is done loading our handler will be called.
-     (sourceBing.getTileLoadFunction())(imageTile, src);
+     (source.getTileLoadFunction())(imageTile, src);
     });
    }
   });
  }
 }
-
-// Inherit necessary methods from BingMaps.
-ol.inherits(sourceSatellite, ol.source.BingMaps);
 
 // Geolocation accuracy indicator
 var featureAccuracy = new ol.Feature();
@@ -645,7 +643,6 @@ function setupGeolocation() {
   trackingOptions: {
    enableHighAccuracy: true,
    timeout: 15000,
-   maximumAge: 60000
   }
  });
 
@@ -682,49 +679,37 @@ function startGeolocation() {
  }, 15200)
 }
 
-var Drag = (function (PointerInteraction) {
-  function Drag() {
-    PointerInteraction.call(this, {
+class Drag extends ol.interaction.Pointer {
+  constructor() {
+    super({
       handleDownEvent: handleDownEvent,
       handleDragEvent: handleDragEvent,
       handleMoveEvent: handleMoveEvent,
-      handleUpEvent: handleUpEvent
+      handleUpEvent: handleUpEvent,
     });
 
     this.coordinate_ = null;
-
     this.cursor_ = 'pointer';
-
     this.feature_ = null;
-
     this.previousCursor_ = undefined;
   }
-
-  if ( PointerInteraction ) Drag.__proto__ = PointerInteraction;
-  Drag.prototype = Object.create( PointerInteraction && PointerInteraction.prototype );
-  Drag.prototype.constructor = Drag;
-
-  return Drag;
-}(ol.interaction.Pointer));
+}
 
 function handleDownEvent(evt) {
-  var map = evt.map;
+  const map = evt.map;
 
-  var feature = map.forEachFeatureAtPixel(evt.pixel,
-    function(feature) {
-      return feature;
-    });
+  const feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+    return feature;
+  });
 
   if (feature && feature.getStyle()) {
    if (feature.getStyle().getImage() != "undefined") {
     this.coordinate_ = evt.coordinate;
     this.feature_ = feature;
-   }
-   else {
+   } else {
     return false;
    }
-  }
-  else {
+  } else {
    return false;
   }
 
@@ -732,10 +717,10 @@ function handleDownEvent(evt) {
 }
 
 function handleDragEvent(evt) {
-  var deltaX = evt.coordinate[0] - this.coordinate_[0];
-  var deltaY = evt.coordinate[1] - this.coordinate_[1];
+  const deltaX = evt.coordinate[0] - this.coordinate_[0];
+  const deltaY = evt.coordinate[1] - this.coordinate_[1];
 
-  var geometry = this.feature_.getGeometry();
+  const geometry = this.feature_.getGeometry();
   geometry.translate(deltaX, deltaY);
 
   this.coordinate_[0] = evt.coordinate[0];
@@ -744,12 +729,11 @@ function handleDragEvent(evt) {
 
 function handleMoveEvent(evt) {
   if (this.cursor_) {
-    var map = evt.map;
-    var feature = map.forEachFeatureAtPixel(evt.pixel,
-      function(feature) {
-        return feature;
-      });
-    var element = evt.map.getTargetElement();
+    const map = evt.map;
+    const feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+      return feature;
+    });
+    const element = evt.map.getTargetElement();
     if (feature) {
       if (element.style.cursor != this.cursor_) {
         this.previousCursor_ = element.style.cursor;
@@ -777,7 +761,7 @@ function buildMap() {
   target: document.getElementById('map'),
   layers: [
    new ol.layer.Tile({
-    source: new sourceSatellite({
+    source: new SourceSatellite({
      // Bing Maps API Key
      key: 'Au8GZIFgFRT9Z_UAruGCjW87lglVzXrcmdByTD3oin9eVKqfwEokFC77vwoQ15XN',
      // Bing Maps tile set
@@ -789,7 +773,11 @@ function buildMap() {
    layerMarkers
   ],
   view: view,
-  interactions: ol.interaction.defaults().extend([new Drag()])
+  interactions: ol.interaction.defaults.defaults().extend([new Drag()]),
+  controls: ol.control.defaults.defaults().extend([new ol.control.Rotate({
+   label: "",
+   compassClassName: "ol-compass fa fa-arrow-up",
+  })])
  });
 
  storageSettings.fetch("lastpos", function(e, p) {
@@ -797,14 +785,6 @@ function buildMap() {
    map.getView().setCenter(p.data)
   }
  })
-
- // Make a listener so we initially snap to our location.
- var update = map.addEventListener('postcompose', function() {
-  updateView();
- });
- map.render();
- // Remove listener so we don't continue to do so.
- map.removeEventListener('postcompose', update);
 
  // We need to disable geolocation if the user drags the map.
  map.on('pointermove', function(e) {
