@@ -676,7 +676,7 @@ function startGeolocation() {
   updateView();
  }
  setTimeout(function() {
-  if (typeof(geolocation.getPosition()) != "undefined") {
+  if (typeof(geolocation.getPosition()) == "undefined") {
    controllerCenter.center(0)
   }
  }, 15200)
