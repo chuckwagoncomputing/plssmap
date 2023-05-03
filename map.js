@@ -702,13 +702,9 @@ function handleDownEvent(evt) {
     return feature;
   });
 
-  if (feature && feature.getStyle()) {
-   if (feature.getStyle().getImage() != "undefined") {
-    this.coordinate_ = evt.coordinate;
-    this.feature_ = feature;
-   } else {
-    return false;
-   }
+  if (feature && feature.getStyle() && feature.getStyle().getImage() != "undefined") {
+   this.coordinate_ = evt.coordinate;
+   this.feature_ = feature;
   } else {
    return false;
   }
@@ -734,7 +730,7 @@ function handleMoveEvent(evt) {
       return feature;
     });
     const element = evt.map.getTargetElement();
-    if (feature) {
+    if (feature && feature.getStyle() && feature.getStyle().getImage() != "undefined") {
       if (element.style.cursor != this.cursor_) {
         this.previousCursor_ = element.style.cursor;
         element.style.cursor = this.cursor_;
