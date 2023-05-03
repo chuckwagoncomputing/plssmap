@@ -661,7 +661,9 @@ function setupGeolocation() {
   featurePosition.setGeometry(coordinates ?
     new ol.geom.Point(coordinates) : null);
   updateView();
-  controllerCenter.center(2);
+  if (controllerCenter.shouldCenter()) {
+   controllerCenter.center(2);
+  }
  });
 
  controllerCenter.center(1);
