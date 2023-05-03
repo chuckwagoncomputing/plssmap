@@ -251,7 +251,7 @@ function ControllerCenter() {
  }
 
 // Privileged:
- // Turns 'keep centered' mode on if passed 'true'
+ // Turns 'keep centered' mode on if passed 1 or 2
  this.center = function(t) {
   centerOnPosition = t;
   styleCenterButton(centerOnPosition);
@@ -646,7 +646,7 @@ function setupGeolocation() {
   trackingOptions: {
    enableHighAccuracy: true,
    timeout: 10000,
-   maxAge: 60000
+   maximumAge: 60000
   }
  });
 
@@ -666,12 +666,12 @@ function setupGeolocation() {
   }
  });
 
- controllerCenter.center(1);
  startGeolocation();
 }
 
 function startGeolocation() {
  geolocation.setTracking(true);
+ controllerCenter.center(1);
  setTimeout(function() {
   if (!geolocation.getTracking()) {
    controllerCenter.center(0)
