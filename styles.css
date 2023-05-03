@@ -406,6 +406,16 @@ body.has-active-menu {
   color: #fff;
  }
 
+.touch .ol-control button:hover {
+ background: #222;
+ color: #fff;
+}
+
+.touch .ol-control button:focus {
+ background: #222;
+ color: #fff;
+}
+
 .plss-control, button {
   background: #222;
   color: #fff !important;
