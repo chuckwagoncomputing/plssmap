@@ -268,7 +268,6 @@ function ControllerCenter() {
   styleCenterButton(centerOnPosition);
   centerButton.addEventListener('click', function() {
    if (centerOnPosition == 0) {
-    this.center(1);
     startGeolocation();
    } else {
     this.center(0);
@@ -672,8 +671,12 @@ function setupGeolocation() {
 function startGeolocation() {
  geolocation.setTracking(true);
  controllerCenter.center(1);
+ if (geolocation.getPosition()) {
+  controllerCenter.center(2);
+  updateView();
+ }
  setTimeout(function() {
-  if (!geolocation.getTracking()) {
+  if (typeof(geolocation.getPosition()) != "undefined") {
    controllerCenter.center(0)
   }
  }, 15200)
