@@ -26,6 +26,13 @@ html, body, .push-content, .map {
  background: rgba(0, 0, 0, 0);
 }
 
+.ol-zoom {
+ top: 0;
+ left: 0;
+ padding: 0;
+ margin: 10px;
+}
+
 .ol-zoom .ol-zoom-in, .ol-zoom .ol-zoom-out {
  background: #fff;
  color: #000;
@@ -109,7 +116,7 @@ html, body, .push-content, .map {
  width: 50px;
  margin: 10px;
  left: 0;
- top: 120px;
+ top: 110px;
 }
 
 .no-touch #controlMarker:hover {
