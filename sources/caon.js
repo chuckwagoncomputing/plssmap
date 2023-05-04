@@ -46,6 +46,7 @@ function PLSSCAON() {
  });
 
  this.layer = new ol.layer.Vector({
+  updateWhileInteracting: true,
   source: source,
   style: getStyle,
   // Set extent. We'll use it to avoid trying to fetch data that doesn't exist.

@@ -579,6 +579,7 @@ featurePosition.setStyle(new ol.style.Style({
 );
 
 var layerGeolocation = new ol.layer.Vector({
+ updateWhileInteracting: true,
  source: new ol.source.Vector({
   features: [
    featurePosition,
@@ -592,6 +593,7 @@ var sourceMarkers = new ol.source.Vector({
 });
 
 var layerMarkers = new ol.layer.Vector({
+ updateWhileInteracting: true,
  source: sourceMarkers,
  zIndex: 1
 });
@@ -757,6 +759,7 @@ function buildMap() {
   target: document.getElementById('map'),
   layers: [
    new ol.layer.Tile({
+    preload: Infinity,
     source: new SourceSatellite({
      // Bing Maps API Key
      key: 'Au8GZIFgFRT9Z_UAruGCjW87lglVzXrcmdByTD3oin9eVKqfwEokFC77vwoQ15XN',
