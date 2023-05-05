@@ -753,7 +753,7 @@ function buildMap() {
   layers: [
    new ol.layer.Tile({
     preload: Infinity,
-    source: new ol.source.BingMaps({
+    source: new SatelliteMaps({
      // Bing Maps API Key
      key: 'Au8GZIFgFRT9Z_UAruGCjW87lglVzXrcmdByTD3oin9eVKqfwEokFC77vwoQ15XN',
      // Bing Maps tile set
