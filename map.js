@@ -571,6 +571,7 @@ featurePosition.setStyle(new ol.style.Style({
 
 var layerGeolocation = new ol.layer.Vector({
  updateWhileInteracting: true,
+ updateWhileAnimating: true,
  source: new ol.source.Vector({
   features: [
    featurePosition,
@@ -585,6 +586,7 @@ var sourceMarkers = new ol.source.Vector({
 
 var layerMarkers = new ol.layer.Vector({
  updateWhileInteracting: true,
+ updateWhileAnimating: true,
  source: sourceMarkers,
  zIndex: 1
 });

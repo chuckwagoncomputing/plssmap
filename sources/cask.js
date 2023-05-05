@@ -47,6 +47,7 @@ function PLSSCASK() {
 
  this.layer = new ol.layer.Vector({
   updateWhileInteracting: true,
+  updateWhileAnimating: true,
   source: source,
   style: getStyle,
   // Set extent. We'll use it to avoid trying to fetch data that doesn't exist.
