@@ -488,75 +488,66 @@ function ControllerSearch() {
  }
 }
 
-class SourceSatellite extends ol.source.BingMaps {
- constructor(options) {
-  super(options)
- }
-
- // This is the function called to load the tile
- tileLoadFunction(imageTile, src) {
-   // Get the <img> element from the tile object
-   var imgElement = imageTile.getImage();
-   // Try getting it from the database
-   storageSatellite.fetch(src, function(e, r) {
-   // If successful, use it
-   if (e == 0) {
-    imgElement.src = r.data;
-    dt = new Date()
-    if (dt.setMonth(dt.getMonth() - 1) > new Date(r.dt)) {
-     storageSatellite.del(src, function(e) {
-      if (e != 0) {
-       console.log("error deleting")
-      }
-     });
-     doLater(2, function(done) {
-      var img = new Image()
-      img.crossOrigin = "anonymous";
-      // Set a handler for when the image loads
-      img.onload = function(e) {
-       done()
-       // Create a canvas
-       var canvas = document.createElement("canvas");
-       canvas.width = img.width;
-       canvas.height = img.height;
-       var ctx = canvas.getContext("2d");
-       // Copy the image to the canvas
-       ctx.drawImage(img, 0, 0);
-       // Get the image data
-       var data = canvas.toDataURL("image/png");
-       // And store it.
-       storageSatellite.store(src, data, function() {});
-      };
-      img.src = r.name
-     });
-    }
-   }
-   // If we didn't have it stored, we'll need to fetch it
-   else {
-    doLater(1, function(done) {
+// This is the function called to load the tile
+function tileLoadFunction(imageTile, src) {
+ // Get the <img> element from the tile object
+ var imgElement = imageTile.getImage();
+ // Try getting it from the database
+ storageSatellite.fetch(src, function(e, r) {
+  // If successful, use it
+  if (e == 0) {
+   imgElement.src = r.data;
+   dt = new Date()
+   if (dt.setMonth(dt.getMonth() - 1) > new Date(r.dt)) {
+    storageSatellite.del(src, function(e) {
+     if (e != 0) {
+      console.log("error deleting")
+     }
+    });
+    doLater(2, function(done) {
+     var img = new Image()
+     img.crossOrigin = "anonymous";
      // Set a handler for when the image loads
-     imgElement.onload = function(e) {
+     img.onload = function(e) {
       done()
       // Create a canvas
       var canvas = document.createElement("canvas");
-      canvas.width = imgElement.width;
-      canvas.height = imgElement.height;
+      canvas.width = img.width;
+      canvas.height = img.height;
       var ctx = canvas.getContext("2d");
       // Copy the image to the canvas
-      ctx.drawImage(imgElement, 0, 0);
+      ctx.drawImage(img, 0, 0);
       // Get the image data
       var data = canvas.toDataURL("image/png");
       // And store it.
       storageSatellite.store(src, data, function() {});
      };
-     // Call Bing Maps' tileLoadFunction.
-     // It will populate the src field for the image element,
-     //  and when the image is done loading our handler will be called.
-     (source.getTileLoadFunction())(imageTile, src);
+     img.src = r.name
     });
    }
-  });
- }
+  }
+  // If we didn't have it stored, we'll need to fetch it
+  else {
+   doLater(1, function(done) {
+    // Set a handler for when the image loads
+    imgElement.onload = function(e) {
+     done()
+     // Create a canvas
+     var canvas = document.createElement("canvas");
+     canvas.width = imgElement.width;
+     canvas.height = imgElement.height;
+     var ctx = canvas.getContext("2d");
+     // Copy the image to the canvas
+     ctx.drawImage(imgElement, 0, 0);
+     // Get the image data
+     var data = canvas.toDataURL("image/png");
+     // And store it.
+     storageSatellite.store(src, data, function() {});
+    };
+    (imageTile.getImage()).src = src;
+   });
+  }
+ });
 }
 
 // Geolocation accuracy indicator
@@ -760,12 +751,13 @@ function buildMap() {
   layers: [
    new ol.layer.Tile({
     preload: Infinity,
-    source: new SourceSatellite({
+    source: new ol.source.BingMaps({
      // Bing Maps API Key
      key: 'Au8GZIFgFRT9Z_UAruGCjW87lglVzXrcmdByTD3oin9eVKqfwEokFC77vwoQ15XN',
      // Bing Maps tile set
      imagerySet: 'AerialWithLabels',
-     maxZoom: 19
+     maxZoom: 19,
+     tileLoadFunction: tileLoadFunction,
     })
    }),
    layerGeolocation,
