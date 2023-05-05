@@ -58,7 +58,8 @@ class SatelliteMaps extends ol.source.TileImage {
 
     fetch(url)
       .then((response) => response.json())
-      .then((json) => this.handleImageryMetadataResponse(json));
+      .then((json) => this.handleImageryMetadataResponse(json, url))
+      .catch(() => this.getMetadataFromCache(url));
 
   }
 
@@ -70,7 +71,19 @@ class SatelliteMaps extends ol.source.TileImage {
     return this.imagerySet_;
   }
 
-  handleImageryMetadataResponse(response) {
+  getMetadataFromCache(url) {
+   storageSatellite.fetch(url, function(e, r) {
+    if (e == 0) {
+     this.handleImageryMetadataResponse(r.data);
+    }
+   }.bind(this));
+  }
+
+  handleImageryMetadataResponse(response, url) {
+   if (typeof(url) != "undefined") {
+    storageSatellite.store(url, response, function() {})
+   }
+
     if (
       response.statusCode != 200 ||
       response.statusDescription != 'OK' ||
