@@ -66,19 +66,23 @@ function PLSSUSA() {
   var s = "__";
   var xd = "_";
   var yd = "_";
+  var fieldValid = false;
   for (var i in textT) {
    // Is this a West/East value?
    if (/[0-9]{1,2}[W,E,w,e]/.test(textT[i])) {
+    fieldValid = true;
     var x = ("_" + parseInt(textT[i])).slice(-2);
     var xd = textT[i].replace(/\d+/, '');
    }
    // Or a North/South value?
    else if (/[0-9]{1,2}[N,S,n,s]/.test(textT[i])) {
+    fieldValid = true;
     var y = ("_" + parseInt(textT[i])).slice(-2);
     var yd = textT[i].replace(/\d+/, '');
    }
    // Or a plain number?
    else if (/[0-9]{1,2}/.test(textT[i])) {
+    fieldValid = true;
     // Assume section number if we don't have one.
     // Try filling section first. This will take care of the convention I've noticed
     //    of using "<section> <n/s> <e/w>" without any marker letters.
@@ -95,6 +99,10 @@ function PLSSUSA() {
      var x = ("_" + parseInt(textT[i])).slice(-2);
     }
    }
+  }
+  if (!fieldValid) {
+    notFound();
+    return;
   }
   var place = state.toUpperCase() + "___" + y + 0 + yd.toUpperCase() + 0 + x + 0 + xd.toUpperCase() + "0%25" + s;
   // Form request
