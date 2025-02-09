@@ -488,63 +488,58 @@ function ControllerSearch() {
  }
 }
 
-// This is the function called to load the tile
-function tileLoadFunction(z, x, y) {
- var url = 'https://static-map-tiles-api.arcgis.com/arcgis/rest/services/static-basemap-tiles-service/beta/arcgis/imagery/labels/static/tile/' + z + '/' + y + '/' + x + '?token=AAPTxy8BH1VEsoebNVZXo8HurP7Qyy5RCX7Kbny-R8948WjW4ganF451HewCx0RiGBq5otCQyziMxNCBXMHp1ua3G7nbqelf8y6fWqwKlcJ0SSxbal6hzCKfmM44FjrGHAmOFhOp_fgbsJjvWrRHmq229_HdgpKY5OPEVEQG1SRHATu244CL1Czy05Ix8Kye-Vf8YGUrSpuPzuCFozmb20EJklNtI7GpQZvDDR06I5KX-3EIhHxWB-0ZJjrC5fFC6z_HAT1_DmjDnQUs';
-
- // Get the <img> element from the tile object
- var img = new Image();
- img.crossOrigin = "anonymous";
- // Try getting it from the database
- storageSatellite.fetch(url, function(e, r) {
-  // If successful, use it
-  if (e == 0) {
-   img.src = r.data;
-   dt = new Date()
-   if (dt.setMonth(dt.getMonth() - 1) > new Date(r.dt)) {
-    storageSatellite.del(src, function(e) {
-     if (e != 0) {
-      console.log("error deleting")
-     }
-    });
-    img.crossOrigin = "anonymous";
-    // Set a handler for when the image loads
-    img.onload = function(e) {
-     // Create a canvas
-     var canvas = document.createElement("canvas");
-     canvas.width = img.width;
-     canvas.height = img.height;
-     var ctx = canvas.getContext("2d");
-     // Copy the image to the canvas
-     ctx.drawImage(img, 0, 0);
-     // Get the image data
-     var data = canvas.toDataURL("image/png");
-     // And store it.
-     storageSatellite.store(src, data, function() {});
-    };
-    img.src = r.name
-   }
-  }
-  // If we didn't have it stored, we'll need to fetch it
-  else {
-   // Set a handler for when the image loads
-   img.onload = function(e) {
-    // Create a canvas
-    var canvas = document.createElement("canvas");
-    canvas.width = img.width;
-    canvas.height = img.height;
-    var ctx = canvas.getContext("2d");
-    // Copy the image to the canvas
-    ctx.drawImage(img, 0, 0);
-    // Get the image data
-    var data = canvas.toDataURL("image/png");
-    // And store it.
-    storageSatellite.store(url, data, function() {});
-   };
-   img.src = url;
-  }
+function loadAndStoreTile(url, img) {
+ // Set a handler for when the image loads
+ img.addEventListener('load', function(e) {
+console.log("bisquq");
+  // Create a canvas
+  var canvas = document.createElement("canvas");
+  canvas.width = img.width;
+  canvas.height = img.height;
+  var ctx = canvas.getContext("2d");
+  // Copy the image to the canvas
+  ctx.drawImage(img, 0, 0);
+  // Get the image data
+  var data = canvas.toDataURL("image/png");
+  // And store it.
+  storageSatellite.store(url, data, function() {});
  });
- return img;
+ img.src = url;
+}
+
+// This is the function called to load the tile
+function tileLoadFunction(url) {
+ return new Promise((resolve, reject) => {
+  // Get the <img> element from the tile object
+  var img = new Image();
+  img.crossOrigin = "anonymous";
+  img.addEventListener('load', () => resolve(img));
+  img.addEventListener('error', () => reject(new Error('load failed')));
+  // Try getting it from the database
+  storageSatellite.fetch(url, function(e, r) {
+   // If successful, use it
+   if (e == 0) {
+    img.src = r.data;
+    dt = new Date()
+    if (dt.setMonth(dt.getMonth() - 1) > new Date(r.dt)) {
+     storageSatellite.del(src, function(e) {
+      if (e != 0) {
+       console.log("error deleting")
+      }
+     });
+     doLater(2, function(done) {
+      var tempImg = new Image()
+      tempImg.crossOrigin = "anonymous";
+      loadAndStoreTile(r.src, tempImg);
+     });
+    }
+   }
+   // If we didn't have it stored, we'll need to fetch it
+   else {
+    loadAndStoreTile(url, img);
+   }
+  });
+ });
 }
 
 // Geolocation accuracy indicator
@@ -752,11 +747,16 @@ function buildMap() {
     preload: Infinity,
     source: new ol.source.ImageTile({
      maxZoom: 19,
-     loader: tileLoadFunction,
+     loader: async function(z, x, y) {
+      const token = 'AAPTxy8BH1VEsoebNVZXo8HurP7Qyy5RCX7Kbny-R8948WjW4ganF451HewCx0RiGBq5otCQyziMxNCBXMHp1ua3G7nbqelf8y6fWqwKlcJ0SSxbal6hzCKfmM44FjrGHAmOFhOp_fgbsJjvWrRHmq229_HdgpKY5OPEVEQG1SRHATu244CL1Czy05Ix8Kye-Vf8YGUrSpuPzuCFozmb20EJklNtI7GpQZvDDR06I5KX-3EIhHxWB-0ZJjrC5fFC6z_HAT1_DmjDnQUs';
+      const url = 'https://ibasemaps-api.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/' + z + '/' + y + '/' + x + '?token=' + token
+      const image = await tileLoadFunction(url);
+      return image;
+     },
      crossOrigin: 'anonymous',
-     tileSize: [512, 512],
      projection: ol.proj.get('EPSG:3857'),
      interpolate: true,
+     transition: 500,
     })
    }),
    layerGeolocation,
