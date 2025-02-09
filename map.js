@@ -489,14 +489,17 @@ function ControllerSearch() {
 }
 
 // This is the function called to load the tile
-function tileLoadFunction(imageTile, src) {
+function tileLoadFunction(z, x, y) {
+ var url = 'https://static-map-tiles-api.arcgis.com/arcgis/rest/services/static-basemap-tiles-service/beta/arcgis/imagery/labels/static/tile/' + z + '/' + y + '/' + x + '?token=AAPTxy8BH1VEsoebNVZXo8HurP7Qyy5RCX7Kbny-R8948WjW4ganF451HewCx0RiGBq5otCQyziMxNCBXMHp1ua3G7nbqelf8y6fWqwKlcJ0SSxbal6hzCKfmM44FjrGHAmOFhOp_fgbsJjvWrRHmq229_HdgpKY5OPEVEQG1SRHATu244CL1Czy05Ix8Kye-Vf8YGUrSpuPzuCFozmb20EJklNtI7GpQZvDDR06I5KX-3EIhHxWB-0ZJjrC5fFC6z_HAT1_DmjDnQUs';
+
  // Get the <img> element from the tile object
- var imgElement = imageTile.getImage();
+ var img = new Image();
+ img.crossOrigin = "anonymous";
  // Try getting it from the database
- storageSatellite.fetch(src, function(e, r) {
+ storageSatellite.fetch(url, function(e, r) {
   // If successful, use it
   if (e == 0) {
-   imgElement.src = r.data;
+   img.src = r.data;
    dt = new Date()
    if (dt.setMonth(dt.getMonth() - 1) > new Date(r.dt)) {
     storageSatellite.del(src, function(e) {
@@ -504,50 +507,44 @@ function tileLoadFunction(imageTile, src) {
       console.log("error deleting")
      }
     });
-    doLater(2, function(done) {
-     var img = new Image()
-     img.crossOrigin = "anonymous";
-     // Set a handler for when the image loads
-     img.onload = function(e) {
-      done()
-      // Create a canvas
-      var canvas = document.createElement("canvas");
-      canvas.width = img.width;
-      canvas.height = img.height;
-      var ctx = canvas.getContext("2d");
-      // Copy the image to the canvas
-      ctx.drawImage(img, 0, 0);
-      // Get the image data
-      var data = canvas.toDataURL("image/png");
-      // And store it.
-      storageSatellite.store(src, data, function() {});
-     };
-     img.src = r.name
-    });
-   }
-  }
-  // If we didn't have it stored, we'll need to fetch it
-  else {
-   doLater(1, function(done) {
+    img.crossOrigin = "anonymous";
     // Set a handler for when the image loads
-    imgElement.onload = function(e) {
-     done()
+    img.onload = function(e) {
      // Create a canvas
      var canvas = document.createElement("canvas");
-     canvas.width = imgElement.width;
-     canvas.height = imgElement.height;
+     canvas.width = img.width;
+     canvas.height = img.height;
      var ctx = canvas.getContext("2d");
      // Copy the image to the canvas
-     ctx.drawImage(imgElement, 0, 0);
+     ctx.drawImage(img, 0, 0);
      // Get the image data
      var data = canvas.toDataURL("image/png");
      // And store it.
      storageSatellite.store(src, data, function() {});
     };
-    (imageTile.getImage()).src = src;
-   });
+    img.src = r.name
+   }
+  }
+  // If we didn't have it stored, we'll need to fetch it
+  else {
+   // Set a handler for when the image loads
+   img.onload = function(e) {
+    // Create a canvas
+    var canvas = document.createElement("canvas");
+    canvas.width = img.width;
+    canvas.height = img.height;
+    var ctx = canvas.getContext("2d");
+    // Copy the image to the canvas
+    ctx.drawImage(img, 0, 0);
+    // Get the image data
+    var data = canvas.toDataURL("image/png");
+    // And store it.
+    storageSatellite.store(url, data, function() {});
+   };
+   img.src = url;
   }
  });
+ return img;
 }
 
 // Geolocation accuracy indicator
@@ -753,11 +750,13 @@ function buildMap() {
   layers: [
    new ol.layer.Tile({
     preload: Infinity,
-    source: new SatelliteMaps({
-     // Maptiler API Key
-     key: '5YEjNOowxDh0A6Ir6k1I',
+    source: new ol.source.ImageTile({
      maxZoom: 19,
-     tileLoadFunction: tileLoadFunction,
+     loader: tileLoadFunction,
+     crossOrigin: 'anonymous',
+     tileSize: [512, 512],
+     projection: ol.proj.get('EPSG:3857'),
+     interpolate: true,
     })
    }),
    layerGeolocation,
