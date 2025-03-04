@@ -749,6 +749,7 @@ function buildMap() {
 
  olms.applyStyle(layerLabels, "https://www.arcgis.com/sharing/rest/content/items/4a3922d6d15f405d8c2b7a448a7fbad2/resources/styles/root.json?f=pjson", {
   accessToken: token,
+  webfonts: ""
  }).then(function () {
   var source = layerLabels.getSource();
   var loadFunction = source.getTileLoadFunction();
