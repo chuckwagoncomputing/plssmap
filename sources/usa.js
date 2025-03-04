@@ -54,7 +54,8 @@ function PLSSUSA() {
   // Set extent. We'll use it to avoid trying to fetch data that doesn't exist.
   extent: PLSSSources[id].extent,
   maxResolution: 120,
-  id: id
+  id: id,
+  zIndex: 2
  });
 
  this.search = function(state, text, newResult, notFound, clearResults) {

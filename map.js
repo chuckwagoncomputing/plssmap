@@ -491,7 +491,6 @@ function ControllerSearch() {
 function loadAndStoreTile(url, img) {
  // Set a handler for when the image loads
  img.addEventListener('load', function(e) {
-console.log("bisquq");
   // Create a canvas
   var canvas = document.createElement("canvas");
   canvas.width = img.width;
@@ -562,6 +561,7 @@ featurePosition.setStyle(new ol.style.Style({
 );
 
 var layerGeolocation = new ol.layer.Vector({
+ zIndex: 5,
  updateWhileInteracting: true,
  updateWhileAnimating: true,
  source: new ol.source.Vector({
@@ -576,11 +576,16 @@ var sourceMarkers = new ol.source.Vector({
  features: []
 });
 
+var layerLabels = new ol.layer.VectorTile({
+ declutter: true,
+ zIndex: 3
+});
+
 var layerMarkers = new ol.layer.Vector({
  updateWhileInteracting: true,
  updateWhileAnimating: true,
  source: sourceMarkers,
- zIndex: 1
+ zIndex: 4
 });
 
 var PLSSLock = [];
@@ -740,6 +745,19 @@ function buildMap() {
  setupGeolocation();
  controllerMarker.setup();
 
+ var token = 'AAPTxy8BH1VEsoebNVZXo8HurP7Qyy5RCX7Kbny-R8948WjW4ganF451HewCx0RiGBq5otCQyziMxNCBXMHp1ua3G7nbqelf8y6fWqwKlcJ0SSxbal6hzCKfmM44FjrGHAmOFhOp_fgbsJjvWrRHmq229_HdgpKY5OPEVEQG1SRHATu244CL1Czy05Ix8Kye-Vf8YGUrSpuPzuCFozmb20EJklNtI7GpQZvDDR06I5KX-3EIhHxWB-0ZJjrC5fFC6z_HAT1_DmjDnQUs';
+
+ olms.applyStyle(layerLabels, "https://www.arcgis.com/sharing/rest/content/items/4a3922d6d15f405d8c2b7a448a7fbad2/resources/styles/root.json?f=pjson", {
+  accessToken: token,
+ }).then(function () {
+  var source = layerLabels.getSource();
+  var loadFunction = source.getTileLoadFunction();
+  source.setTileLoadFunction(function (tile, url) {
+    return loadFunction(tile, url.replace("tile/", "VectorTileServer/tile/"));
+  });
+ });
+
+
  map = new ol.Map({
   target: document.getElementById('map'),
   layers: [
@@ -748,7 +766,6 @@ function buildMap() {
     source: new ol.source.ImageTile({
      maxZoom: 19,
      loader: async function(z, x, y) {
-      const token = 'AAPTxy8BH1VEsoebNVZXo8HurP7Qyy5RCX7Kbny-R8948WjW4ganF451HewCx0RiGBq5otCQyziMxNCBXMHp1ua3G7nbqelf8y6fWqwKlcJ0SSxbal6hzCKfmM44FjrGHAmOFhOp_fgbsJjvWrRHmq229_HdgpKY5OPEVEQG1SRHATu244CL1Czy05Ix8Kye-Vf8YGUrSpuPzuCFozmb20EJklNtI7GpQZvDDR06I5KX-3EIhHxWB-0ZJjrC5fFC6z_HAT1_DmjDnQUs';
       const url = 'https://ibasemaps-api.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/' + z + '/' + y + '/' + x + '?token=' + token
       const image = await tileLoadFunction(url);
       return image;
@@ -760,7 +777,8 @@ function buildMap() {
     })
    }),
    layerGeolocation,
-   layerMarkers
+   layerMarkers,
+   layerLabels
   ],
   view: view,
   interactions: ol.interaction.defaults.defaults().extend([new Drag()]),
