@@ -1,2 +1,2 @@
 # plssmap
-PLSS data overlayed on a Bing satellite map
+PLSS data overlayed on a satellite map
