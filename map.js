@@ -512,6 +512,7 @@ function tileLoadFunction(url) {
   // Get the <img> element from the tile object
   var img = new Image();
   img.crossOrigin = "anonymous";
+  img.fetchPriority = "high";
   img.addEventListener('load', () => resolve(img));
   img.addEventListener('error', () => reject(new Error('load failed')));
   // Try getting it from the database
@@ -526,11 +527,10 @@ function tileLoadFunction(url) {
        console.log("error deleting")
       }
      });
-     doLater(2, function(done) {
-      var tempImg = new Image()
-      tempImg.crossOrigin = "anonymous";
-      loadAndStoreTile(r.src, tempImg);
-     });
+     var tempImg = new Image()
+     tempImg.crossOrigin = "anonymous";
+     tempImg.fetchPriority = "low";
+     loadAndStoreTile(r.src, tempImg);
     }
    }
    // If we didn't have it stored, we'll need to fetch it
@@ -823,6 +823,24 @@ function buildMap() {
  });
 }
 
+function setupApp() {
+ controllerSearch = new ControllerSearch();
+ buildMap();
+ controllerMarker.attachInput("markerName");
+ controllerMarker.attachMarkerButton("controlMarker");
+ controllerMarker.attachCancelButton("buttonCancelMarker");
+ controllerMarker.attachSaveButton("buttonSaveMarker");
+ controllerMarker.attachDrawer("markerInput")
+ controllerCenter.attachCenterButton("controlCenter");
+ controllerMenu.attachMenuButton("controlMenu");
+ controllerMenu.attachDrawer("menu")
+ controllerMenu.attachSearchTabButton("searchTabButton")
+ controllerMenu.attachMarkerTabButton("markerTabButton")
+ controllerSearch.attachStateSelector("searchstate");
+ controllerSearch.attachSearchField("controlSearchInput");
+ controllerSearch.attachSearchButton("controlSearchButton");
+}
+
 window.addEventListener('load', function() {
  document.addEventListener('deviceready', function() {
   if (typeof cordova != "undefined") {
@@ -847,29 +865,18 @@ window.addEventListener('load', function() {
  else {
   document.documentElement.className += " touch";
  }
+
+ waitCount = 2;
+
+ storageSettings = new DataStorage(
+  {name: "settings"},
+  function(e) {
+   if (--waitCount == 0) setupApp();
+ });
+
  storageSatellite = new DataStorage(
   {name: 'satellite'},
-  function() {
-   storageSettings = new DataStorage(
-    {name: "settings"},
-    function() {
-     controllerSearch = new ControllerSearch();
-     buildMap();
-     controllerMarker.attachInput("markerName");
-     controllerMarker.attachMarkerButton("controlMarker");
-     controllerMarker.attachCancelButton("buttonCancelMarker");
-     controllerMarker.attachSaveButton("buttonSaveMarker");
-     controllerMarker.attachDrawer("markerInput")
-     controllerCenter.attachCenterButton("controlCenter");
-     controllerMenu.attachMenuButton("controlMenu");
-     controllerMenu.attachDrawer("menu")
-     controllerMenu.attachSearchTabButton("searchTabButton")
-     controllerMenu.attachMarkerTabButton("markerTabButton")
-     controllerSearch.attachStateSelector("searchstate");
-     controllerSearch.attachSearchField("controlSearchInput");
-     controllerSearch.attachSearchButton("controlSearchButton");
-    }
-   );
-  }
- );
+  function(e) {
+   if (--waitCount == 0) setupApp();
+ });
 });

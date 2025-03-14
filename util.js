@@ -74,21 +74,18 @@ function fetchSource(url, id, key, storage, source, projection) {
        console.log("error deleting")
       }
      });
-     doLater(2, function(done) {
-      $.ajax({url: url, dataType: 'jsonp', success: function(response) {
-       if (response.error) {
-        // Remove the lock
-        sourceLocks.splice(sourceLocks.indexOf(id + key), 1);
-        console.log(response.error.message + '\n' +
-                    response.error.details.join('\n'));
-       }
-       else {
-        // Store response so we have it next time.
-        storage.store(key, response, function() {});
-       }
-       done()
-      }})
-     });
+     $.ajax({url: url, dataType: 'jsonp', success: function(response) {
+      if (response.error) {
+       // Remove the lock
+       sourceLocks.splice(sourceLocks.indexOf(id + key), 1);
+       console.log(response.error.message + '\n' +
+                   response.error.details.join('\n'));
+      }
+      else {
+       // Store response so we have it next time.
+       storage.store(key, response, function() {});
+      }
+     }})
     }
    }
    // If not, we'll have to fetch it.
